@@ -1,4 +1,7 @@
 ﻿@page "/"
+@using RecipeLewis.Models
+@attribute [Authorize]
+@inject IUserService UserService
 
 <PageTitle>Index</PageTitle>
 
@@ -8,3 +11,28 @@
 Welcome to your new app.
 
 <SurveyPrompt Title="How is Blazor working for you?" />
+
+<h6>Users from secure api end point</h6>
+        @if (loading)
+{
+    <div class="spinner-border spinner-border-sm"></div>
+}
+@if (user != null)
+{
+    <ul>
+        <li>@user.Name - @user.Role.ToString()</li>
+
+    </ul>
+}
+
+@code {
+    private bool loading;
+    private UserModel user;
+
+    protected override async Task OnInitializedAsync()
+    {
+        loading = true;
+        user = await UserService.GetUser();
+        loading = false;
+    }
+}
