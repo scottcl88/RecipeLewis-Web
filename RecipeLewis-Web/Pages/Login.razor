@@ -1,69 +1,50 @@
-﻿@*@using Microsoft.AspNetCore.Components.Authorization
-@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
-
-@inject NavigationManager Navigation
-@inject SignOutSessionStateManager SignOutManager
-
-<AuthorizeView>
-    <Authorized>
-        Hello, @context.User.Identity?.Name!
-        <button class="nav-link btn btn-link" @onclick="BeginSignOut">Log out</button>
-    </Authorized>
-    <NotAuthorized>
-        <a href="authentication/login">Log in</a>
-    </NotAuthorized>
-</AuthorizeView>
-
-@code{
-    private async Task BeginSignOut(MouseEventArgs args)
-    {
-        await SignOutManager.SetSignOutState();
-        Navigation.NavigateTo("authentication/logout");
-    }
-}*@
-@page "/login"
+﻿@page "/login"
 @using System.ComponentModel.DataAnnotations
 @inject IAuthenticationService AuthenticationService
 @inject NavigationManager NavigationManager
+@using System.Text.RegularExpressions
 
-<div class="col-md-6 offset-md-3 mt-5">
-    <div class="alert alert-info">
-        Username: user@example.com<br />
-        Password: string
-    </div>
-    <div class="card1">
-        <h4 class="card-header1">Blazor WebAssembly JWT Login Example</h4>
-        <div class="card-body1">
-            <EditForm Model="@model" OnValidSubmit="HandleValidSubmit">
-                <DataAnnotationsValidator />
-                <div class="form-group">
-                    <label>Username</label>
-                    <InputText @bind-Value="model.Username" class="form-control" />
-                    <ValidationMessage For="@(() => model.Username)" />
+@inherits LayoutComponentBase
+<MudGrid>
+    <MudItem xs="12" sm="7">
+        <MudPaper Class="pa-4">
+            <MudForm @ref="form" @bind-IsValid="@isValid">
+                <div class="alert alert-info">
+                    Username: user@example.com<br />
+                    Password: string
                 </div>
-                <div class="form-group">
-                    <label>Password</label>
-                    <InputText @bind-Value="model.Password" type="password" class="form-control" />
-                    <ValidationMessage For="@(() => model.Password)" />
+                <MudTextField T="string" Label="Username" @bind-value="model.Email" Required="true" RequiredError="User name is required!" />
+                <MudTextField T="string" Label="Password" @bind-value="model.Password"
+                              InputType="InputType.Password" Required="true"
+                              RequiredError="Password is required!" />
+                <div class="d-flex align-center justify-space-between mt-6">
+                    <MudButton Disabled="@(loading || !isValid)" OnClick="HandleSubmit" Class="ml-auto" Variant="Variant.Filled" Color="Color.Primary">
+                        @if (loading)
+                        {
+                            <MudProgressCircular Class="ms-n1" Size="Size.Small" Indeterminate="true" />
+                            <MudText Class="ms-2">Working...</MudText>
+                        }
+                        else
+                        {
+                            <MudText>Login</MudText>
+                        }
+                    </MudButton>
                 </div>
-                <button class="btn btn-primary">
-                    @if (loading) {
-                        <span class="spinner-border spinner-border-sm mr-1"></span>
-                    }
-                    Login
-                </button>
-                @if (!string.IsNullOrEmpty(error)) {
-                    <div class="alert alert-danger mt-3 mb-0">@error</div>
-                }
-            </EditForm>
+            </MudForm>
+        </MudPaper>
+        <div hidden="@(!showError)">
+            <MudAlert Severity="Severity.Error">An error occurred.</MudAlert>
         </div>
-    </div>
-</div>
+    </MudItem>
+</MudGrid>
 
 @code {
+    private bool isValid;
+    private MudForm form;
     private Model model = new Model();
     private bool loading;
     private string error;
+    private bool showError;
 
     protected override void OnInitialized()
     {
@@ -73,19 +54,20 @@
             NavigationManager.NavigateTo("");
         }
     }
-
-    private async void HandleValidSubmit()
+    private async void HandleSubmit()
     {
         loading = true;
         try
         {
-            await AuthenticationService.Login(model.Username, model.Password);
+            showError = false;
+            await AuthenticationService.Login(model.Email, model.Password);
             var returnUrl = NavigationManager.QueryString("returnUrl") ?? "/";
             NavigationManager.NavigateTo(returnUrl);
         }
         catch (Exception ex)
         {
             error = ex.Message;
+            showError = true;
             loading = false;
             StateHasChanged();
         }
@@ -94,7 +76,7 @@
     private class Model
     {
         [Required]
-        public string Username { get; set; }
+        public string Email { get; set; }
 
         [Required]
         public string Password { get; set; }

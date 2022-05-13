@@ -8,7 +8,7 @@ namespace BlazorApp.Services
     {
         UserModel User { get; }
         Task Initialize();
-        Task Login(string username, string password);
+        Task Login(string email, string password);
         Task Logout();
     }
 
@@ -35,9 +35,9 @@ namespace BlazorApp.Services
             User = await _localStorageService.GetItem<UserModel>("user");
         }
 
-        public async Task Login(string username, string password)
+        public async Task Login(string email, string password)
         {
-            User = await _httpService.Post<UserModel>("users/authenticate", new { Email = username, Password = password});
+            User = await _httpService.Post<UserModel>("users/authenticate", new { Email = email, Password = password});
             await _localStorageService.SetItem("user", User);
         }
 
