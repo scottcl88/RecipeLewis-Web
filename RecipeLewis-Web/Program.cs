@@ -18,28 +18,11 @@ services
     .AddScoped<IUserService, UserService>()
     .AddScoped<IRecipeService, RecipeService>()
     .AddScoped<IHttpService, HttpService>()
-    .AddScoped<ILocalStorageService, LocalStorageService>();
+    .AddScoped<ILocalStorageService, LocalStorageService>()
+    .AddSingleton(new AuthUserSingleton());
 
-//services.AddApiAuthorization();
-//services.AddAuthorizationCore();
-
-//services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
-
-//services.AddOidcAuthentication(options =>
-//{
-//    // Configure your authentication provider options here.
-//    // For more information, see https://aka.ms/blazor-standalone-auth
-//    builder.Configuration.Bind("Local", options.ProviderOptions);
-//});
-
-// configure http client
 services.AddScoped(x => {
     var apiUrl = new Uri(builder.Configuration["apiUrl"]);
-
-    // use fake backend if "fakeBackend" is "true" in appsettings.json
-    //if (builder.Configuration["fakeBackend"] == "true")
-    //    return new HttpClient(new FakeBackendHandler()) { BaseAddress = apiUrl };
-
     return new HttpClient() { BaseAddress = apiUrl };
 });
 

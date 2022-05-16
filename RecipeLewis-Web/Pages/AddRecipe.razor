@@ -3,6 +3,8 @@
 @using RecipeLewis.Models.Requests
 @attribute [Authorize]
 @inject IRecipeService RecipeService
+@inject ISnackbar Snackbar
+@inject NavigationManager NavigationManager
 
 <PageTitle>Add Recipe</PageTitle>
 
@@ -47,7 +49,16 @@
         try
         {
             showError = false;
-            await RecipeService.Create(model);
+            var result = await RecipeService.Create(model);
+            if(result == null)
+            {
+                Snackbar.Add("An error occured!", Severity.Error, config => { config.ShowCloseIcon = true; });
+            }
+            else
+            {
+                Snackbar.Add("Successfully added recipe!", Severity.Success, config => { config.ShowCloseIcon = true; });
+                NavigationManager.NavigateTo("/recipes");
+            }
         }
         catch (Exception ex)
         {

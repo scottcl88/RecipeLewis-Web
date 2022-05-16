@@ -21,17 +21,18 @@ namespace BlazorApp.Services
 
     public class HttpService : IHttpService
     {
-        private HttpClient _httpClient;
-        private NavigationManager _navigationManager;
-        private ILocalStorageService _localStorageService;
-        private IConfiguration _configuration;
+        private readonly HttpClient _httpClient;
+        private readonly NavigationManager _navigationManager;
+        private readonly ILocalStorageService _localStorageService;
+        private readonly IConfiguration _configuration;
 
         public HttpService(
             HttpClient httpClient,
             NavigationManager navigationManager,
             ILocalStorageService localStorageService,
             IConfiguration configuration
-        ) {
+        )
+        {
             _httpClient = httpClient;
             _navigationManager = navigationManager;
             _localStorageService = localStorageService;
@@ -66,7 +67,8 @@ namespace BlazorApp.Services
             // auto logout on 401 response
             if (response.StatusCode == HttpStatusCode.Unauthorized)
             {
-                _navigationManager.NavigateTo("logout");
+                await _localStorageService.RemoveItem("user");
+                _navigationManager.NavigateTo("login");
                 return default;
             }
 

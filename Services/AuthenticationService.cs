@@ -4,9 +4,13 @@ using System.Threading.Tasks;
 
 namespace BlazorApp.Services
 {
+    public sealed class AuthUserSingleton
+    {
+        public UserModel? User { get; set; }
+    }
     public interface IAuthenticationService
     {
-        UserModel GetUser();
+        UserModel User { get; }
         Task Initialize();
         Task Login(string email, string password);
         Task Logout();
@@ -14,47 +18,40 @@ namespace BlazorApp.Services
 
     public class AuthenticationService : IAuthenticationService
     {
-        private IHttpService _httpService;
-        private NavigationManager _navigationManager;
-        private ILocalStorageService _localStorageService;
-
-        private UserModel _user;
-        public UserModel GetUser()
-        {
-            if (_user == null)
-            {
-                //_user = _localStorageService.GetItem<UserModel>("user").Result;
-            }
-            return _user;
-        }
+        private readonly IHttpService _httpService;
+        private readonly NavigationManager _navigationManager;
+        private readonly ILocalStorageService _localStorageService;
+        private readonly AuthUserSingleton _authUser;
+        public UserModel? User => _authUser?.User;
 
         public AuthenticationService(
             IHttpService httpService,
             NavigationManager navigationManager,
-            ILocalStorageService localStorageService
+            ILocalStorageService localStorageService,
+            AuthUserSingleton authUser
         )
         {
             _httpService = httpService;
             _navigationManager = navigationManager;
+            _authUser = authUser;
             _localStorageService = localStorageService;
             Console.WriteLine("AuthenticationService constructed");
         }
 
         public async Task Initialize()
         {
-            _user = await _localStorageService.GetItem<UserModel>("user");
-            Console.WriteLine("User set: {0}", _user);
+            _authUser.User = await _localStorageService.GetItem<UserModel>("user");
         }
 
         public async Task Login(string email, string password)
         {
-            _user = await _httpService.Post<UserModel>("users/authenticate", new { Email = email, Password = password });
-            await _localStorageService.SetItem("user", _user);
+            _authUser.User = await _httpService.Post<UserModel>("users/authenticate", new { Email = email, Password = password });
+            await _localStorageService.SetItem("user", _authUser.User);
         }
 
         public async Task Logout()
         {
-            _user = null;
+            _authUser.User = null;
             await _localStorageService.RemoveItem("user");
             _navigationManager.NavigateTo("login");
         }

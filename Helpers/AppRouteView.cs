@@ -18,7 +18,7 @@ namespace BlazorApp.Helpers
         protected override void Render(RenderTreeBuilder builder)
         {
             var authorize = Attribute.GetCustomAttribute(RouteData.PageType, typeof(AuthorizeAttribute)) != null;
-            if (authorize && AuthenticationService.GetUser() == null)
+            if (authorize && AuthenticationService.User == null)
             {
                 Console.WriteLine("User not authenticated, going to login");
                 var returnUrl = WebUtility.UrlEncode(new Uri(NavigationManager.Uri).PathAndQuery);
