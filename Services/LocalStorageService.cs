@@ -23,7 +23,7 @@ namespace BlazorApp.Services
         public async Task<T> GetItem<T>(string key)
         {
             var json = await _jsRuntime.InvokeAsync<string>("localStorage.getItem", key);
-
+            Console.WriteLine("JSON getItem result: ", json);
             if (json == null)
                 return default;
 

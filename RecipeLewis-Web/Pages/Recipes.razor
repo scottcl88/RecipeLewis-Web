@@ -1,0 +1,51 @@
+﻿@page "/recipes"
+@using RecipeLewis.Models
+@attribute [Authorize]
+@inject IRecipeService RecipeService
+
+<PageTitle>Recipes</PageTitle>
+
+<MudButton Href="/add-recipe" Class="ml-auto" Variant="Variant.Filled" Color="Color.Primary">Add Recipe</MudButton>
+<MudTable Items="@recipes" Hover="true" Filter="new Func<RecipeModel,bool>(FilterFunc1)" @bind-SelectedItem="selectedItem1">
+    <ToolBarContent>
+        <MudText Typo="Typo.h6">Recipes</MudText>
+        <MudSpacer />
+        <MudTextField @bind-Value="searchString1" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+    </ToolBarContent>
+    <HeaderContent>
+        <MudTh>Title</MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="Nr">@context.Title</MudTd>
+    </RowTemplate>
+    <PagerContent>
+        <MudTablePager />
+    </PagerContent>
+</MudTable>
+
+
+@code {
+    private bool loading;
+    private List<RecipeModel> recipes;
+    private RecipeModel selectedItem1 = null;
+    private string searchString1 = "";
+    private HashSet<RecipeModel> selectedItems = new HashSet<RecipeModel>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        loading = true;
+        recipes = await RecipeService.GetRecipes();
+        loading = false;
+    }
+
+    private bool FilterFunc1(RecipeModel element) => FilterFunc(element, searchString1);
+
+    private bool FilterFunc(RecipeModel element, string searchString)
+    {
+        if (string.IsNullOrWhiteSpace(searchString))
+            return true;
+        if (element.Title.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+        return false;
+    }
+}

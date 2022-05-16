@@ -16,6 +16,7 @@ services.AddMudServices();
 services
     .AddScoped<IAuthenticationService, AuthenticationService>()
     .AddScoped<IUserService, UserService>()
+    .AddScoped<IRecipeService, RecipeService>()
     .AddScoped<IHttpService, HttpService>()
     .AddScoped<ILocalStorageService, LocalStorageService>();
 
