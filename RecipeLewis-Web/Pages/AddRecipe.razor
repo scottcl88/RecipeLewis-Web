@@ -5,7 +5,6 @@
 @inject IRecipeService RecipeService
 @inject ISnackbar Snackbar
 @inject NavigationManager NavigationManager
-@*Inject JSRuntime to allow JavaScript Interop *@
 @inject IJSRuntime JSRuntime
 
 <PageTitle>Add Recipe</PageTitle>
@@ -30,6 +29,19 @@
                     </MudItem>
                     <MudItem xs="12" sm="12" md="6" lg="6">
                         <MudTextField T="string" Label="Yield" @bind-value="model.Yield" />
+                    </MudItem>
+                    <MudItem xs="12" sm="12" md="12" lg="12">
+                        <label class="mud-input-label">Tags</label>
+                        <MudChipSet AllClosable="true" OnClose="Closed">
+                            @foreach (var value in tags)
+                            {
+                                <MudChip Text="@value"></MudChip>
+                            }
+                        </MudChipSet>
+                    </MudItem>
+                    <MudItem xs="12" sm="12" md="6" lg="6">
+                        <MudTextField T="string" Label="Tag" @bind-value="tagInput" Style="display: inline-block"/>
+                        <MudButton Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Add" OnClick="AddTag" Color="Color.Secondary" Style="margin-top: 15px;">Add</MudButton>
                     </MudItem>
                     <MudItem xs="12" sm="12" md="12" lg="12">
                         <MudTextField T="string" Label="Description" @bind-value="model.Description" Lines="3" />
@@ -165,7 +177,16 @@
     private ElementReference divDirectionsEditorElement;
     private string EditorContent;
     private string EditorHTMLContent;
+    private string tagInput;
     private bool EditorEnabled = true;
+    List<string> tags = new List<string>();
+    public void Closed(MudChip chip) => tags.Remove(chip.Text);
+
+    public void AddTag()
+    {
+        tags.Add(tagInput);
+        tagInput = "";
+    }
 
     private async void HandleSubmit()
     {
