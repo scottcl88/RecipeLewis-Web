@@ -1,12 +1,12 @@
 ﻿(function () {
     window.QuillFunctions = {
-        createQuill: function (quillElement, toolbarId) {
+        createQuill: function (quillElement, toolbarId, placeholder) {
             var options = {
                 debug: 'info',
                 modules: {
                     toolbar: toolbarId
                 },
-                placeholder: 'Compose an epic...',
+                placeholder: placeholder,
                 readOnly: false,
                 theme: 'snow'
             };

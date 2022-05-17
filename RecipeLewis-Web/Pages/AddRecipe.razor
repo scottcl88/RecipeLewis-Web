@@ -11,125 +11,143 @@
 <PageTitle>Add Recipe</PageTitle>
 
 <MudGrid>
-    <MudItem xs="12" sm="7" lg="12">
+    <MudItem xs="12" sm="12" lg="12">
         <MudPaper Class="pa-4">
             <MudForm @ref="form" @bind-IsValid="@isValid">
-                <MudTextField T="string" Label="Title" @bind-value="model.Title" Required="true" RequiredError="Title is required!" />
-                <MudTextField T="string" Label="Description" @bind-value="model.Description" Lines="3" />
-                <MudTextField T="string" Label="Storage" @bind-value="model.Storage" Lines="3" />
-                <MudTextField T="string" Label="Yield" @bind-value="model.Yield" />
-                <MudTextField T="string" Label="Nutrition" @bind-value="model.Nutrition" />
-                <MudTextField T="string" Label="Author" @bind-value="model.Author" />
-                <MudTimePicker Label="Cook Time" @bind-Time="model.CookTime" />
-                <MudTimePicker Label="Prep Time" @bind-Time="model.PrepTime" />
-                <MudTimePicker Label="Total Time" @bind-Time="model.TotalTime" />
-                <MudSelect T="string" Label="Category" AnchorOrigin="Origin.BottomCenter">
-                    <MudSelectItem Value="@("Cappuccino")" />
-                    <MudSelectItem Value="@("Cafe Latte")" />
-                    <MudSelectItem Value="@("Espresso")" />
-                </MudSelect>
-                <MudItem class="mt-2">
-                    <label class="mud-input-label">Ingredients</label>
-                    <div id="ingredientsToolbar">
-                        <span class="ql-formats">
-                            <select class="ql-font">
-                                <option selected=""></option>
-                                <option value="serif"></option>
-                                <option value="monospace"></option>
-                            </select>
-                            <select class="ql-size">
-                                <option value="small"></option>
-                                <option selected=""></option>
-                                <option value="large"></option>
-                                <option value="huge"></option>
-                            </select>
-                        </span>
-                        <span class="ql-formats">
-                            <button class="ql-bold"></button>
-                            <button class="ql-italic"></button>
-                            <button class="ql-underline"></button>
-                            <button class="ql-strike"></button>
-                        </span>
-                        <span class="ql-formats">
-                            <select class="ql-color"></select>
-                            <select class="ql-background"></select>
-                        </span>
-                        <span class="ql-formats">
-                            <button class="ql-list" value="ordered"></button>
-                            <button class="ql-list" value="bullet"></button>
-                            <button class="ql-indent" value="-1"></button>
-                            <button class="ql-indent" value="+1"></button>
-                            <select class="ql-align">
-                                <option selected=""></option>
-                                <option value="center"></option>
-                                <option value="right"></option>
-                                <option value="justify"></option>
-                            </select>
-                        </span>
-                        <span class="ql-formats">
-                            <button class="ql-link"></button>
-                        </span>
-                    </div>
-                    <div @ref="@divIngredientsEditorElement" />
+                <MudGrid>
+                    <MudItem xs="12" sm="12" md="6" lg="6">
+                        <MudTextField T="string" Label="Title" @bind-value="model.Title" Required="true" RequiredError="Title is required!" />
+                    </MudItem>
+                    <MudItem xs="12" sm="12" md="6" lg="6">
+                        <MudTextField T="string" Label="Author" @bind-value="model.Author" />
+                    </MudItem>
+                    <MudItem xs="12" sm="12" md="6" lg="6">
+                        <MudSelect T="string" Label="Category" AnchorOrigin="Origin.BottomCenter">
+                            <MudSelectItem Value="@("Cappuccino")" />
+                            <MudSelectItem Value="@("Cafe Latte")" />
+                            <MudSelectItem Value="@("Espresso")" />
+                        </MudSelect>
+                    </MudItem>
+                    <MudItem xs="12" sm="12" md="6" lg="6">
+                        <MudTextField T="string" Label="Yield" @bind-value="model.Yield" />
+                    </MudItem>
+                    <MudItem xs="12" sm="12" md="12" lg="12">
+                        <MudTextField T="string" Label="Description" @bind-value="model.Description" Lines="3" />
+                        <MudTextField T="string" Label="Storage" @bind-value="model.Storage" Lines="3" />
+                        <MudTextField T="string" Label="Nutrition" @bind-value="model.Nutrition" />
+                    </MudItem>
+                    <MudItem xs="12" sm="12" md="4" lg="4">
+                        <MudTimePicker Label="Prep Time" @bind-Time="model.PrepTime" />
+                    </MudItem>
+                    <MudItem xs="12" sm="12" md="4" lg="4">
+                        <MudTimePicker Label="Cook Time" @bind-Time="model.CookTime" />
+                    </MudItem>
+                    <MudItem xs="12" sm="12" md="4" lg="4">
+                        <MudTimePicker Label="Total Time" @bind-Time="model.TotalTime" />
+                    </MudItem>
+                    <MudItem xs="12" sm="12" md="12" lg="12" class="ma-auto">
+                        <label class="mud-input-label">Ingredients</label>
+                        <div id="ingredientsToolbar">
+                            <span class="ql-formats">
+                                <select class="ql-font">
+                                    <option selected=""></option>
+                                    <option value="serif"></option>
+                                    <option value="monospace"></option>
+                                </select>
+                                <select class="ql-size">
+                                    <option value="small"></option>
+                                    <option selected=""></option>
+                                    <option value="large"></option>
+                                    <option value="huge"></option>
+                                </select>
+                            </span>
+                            <span class="ql-formats">
+                                <button class="ql-bold"></button>
+                                <button class="ql-italic"></button>
+                                <button class="ql-underline"></button>
+                                <button class="ql-strike"></button>
+                            </span>
+                            <span class="ql-formats">
+                                <select class="ql-color"></select>
+                                <select class="ql-background"></select>
+                            </span>
+                            <span class="ql-formats">
+                                <button class="ql-list" value="ordered"></button>
+                                <button class="ql-list" value="bullet"></button>
+                                <button class="ql-indent" value="-1"></button>
+                                <button class="ql-indent" value="+1"></button>
+                                <select class="ql-align">
+                                    <option selected=""></option>
+                                    <option value="center"></option>
+                                    <option value="right"></option>
+                                    <option value="justify"></option>
+                                </select>
+                            </span>
+                            <span class="ql-formats">
+                                <button class="ql-link"></button>
+                            </span>
+                        </div>
+                        <div @ref="@divIngredientsEditorElement" />
 
-                </MudItem>
-                <MudItem class="mt-2">
-                    <label class="mud-input-label">Directions</label>
-                    <div id="directionsToolbar" >
-                        <span class="ql-formats">
-                            <select class="ql-font">
-                                <option selected=""></option>
-                                <option value="serif"></option>
-                                <option value="monospace"></option>
-                            </select>
-                            <select class="ql-size">
-                                <option value="small"></option>
-                                <option selected=""></option>
-                                <option value="large"></option>
-                                <option value="huge"></option>
-                            </select>
-                        </span>
-                        <span class="ql-formats">
-                            <button class="ql-bold"></button>
-                            <button class="ql-italic"></button>
-                            <button class="ql-underline"></button>
-                            <button class="ql-strike"></button>
-                        </span>
-                        <span class="ql-formats">
-                            <select class="ql-color"></select>
-                            <select class="ql-background"></select>
-                        </span>
-                        <span class="ql-formats">
-                            <button class="ql-list" value="ordered"></button>
-                            <button class="ql-list" value="bullet"></button>
-                            <button class="ql-indent" value="-1"></button>
-                            <button class="ql-indent" value="+1"></button>
-                            <select class="ql-align">
-                                <option selected=""></option>
-                                <option value="center"></option>
-                                <option value="right"></option>
-                                <option value="justify"></option>
-                            </select>
-                        </span>
-                        <span class="ql-formats">
-                            <button class="ql-link"></button>
-                        </span>
-                    </div>
-                    <div @ref="@divDirectionsEditorElement" />
-                </MudItem>
-                <div class="d-flex align-center justify-space-between mt-6">
-                    <MudButton Disabled="@(loading || !isValid)" OnClick="HandleSubmit" Class="ml-auto" Variant="Variant.Filled" Color="Color.Primary">
-                        @if (loading)
-                        {
-                            <MudProgressCircular Class="ms-n1" Size="Size.Small" Indeterminate="true" />
-                            <MudText Class="ms-2">Working...</MudText>
-                        }
-                        else
-                        {
-                            <MudText>Add</MudText>
-                        }
-                    </MudButton>
-                </div>
+                    </MudItem>
+                    <MudItem xs="12" sm="12" md="12" lg="12" class="ma-auto">
+                        <label class="mud-input-label">Directions</label>
+                        <div id="directionsToolbar">
+                            <span class="ql-formats">
+                                <select class="ql-font">
+                                    <option selected=""></option>
+                                    <option value="serif"></option>
+                                    <option value="monospace"></option>
+                                </select>
+                                <select class="ql-size">
+                                    <option value="small"></option>
+                                    <option selected=""></option>
+                                    <option value="large"></option>
+                                    <option value="huge"></option>
+                                </select>
+                            </span>
+                            <span class="ql-formats">
+                                <button class="ql-bold"></button>
+                                <button class="ql-italic"></button>
+                                <button class="ql-underline"></button>
+                                <button class="ql-strike"></button>
+                            </span>
+                            <span class="ql-formats">
+                                <select class="ql-color"></select>
+                                <select class="ql-background"></select>
+                            </span>
+                            <span class="ql-formats">
+                                <button class="ql-list" value="ordered"></button>
+                                <button class="ql-list" value="bullet"></button>
+                                <button class="ql-indent" value="-1"></button>
+                                <button class="ql-indent" value="+1"></button>
+                                <select class="ql-align">
+                                    <option selected=""></option>
+                                    <option value="center"></option>
+                                    <option value="right"></option>
+                                    <option value="justify"></option>
+                                </select>
+                            </span>
+                            <span class="ql-formats">
+                                <button class="ql-link"></button>
+                            </span>
+                        </div>
+                        <div @ref="@divDirectionsEditorElement" />
+                    </MudItem>
+                    <MudItem xs="12" sm="12" md="12" lg="12" class="mt-12">
+                        <MudButton Disabled="@(loading || !isValid)" OnClick="HandleSubmit" Class="ml-auto" Variant="Variant.Filled" Color="Color.Primary">
+                            @if (loading)
+                            {
+                                <MudProgressCircular Class="ms-n1" Size="Size.Small" Indeterminate="true" />
+                                <MudText Class="ms-2">Working...</MudText>
+                            }
+                            else
+                            {
+                                <MudText>Add</MudText>
+                            }
+                        </MudButton>
+                    </MudItem>
+                </MudGrid>
             </MudForm>
         </MudPaper>
     </MudItem>
@@ -183,9 +201,9 @@
         if (firstRender)
         {
             await JSRuntime.InvokeAsync<string>(
-                "QuillFunctions.createQuill", divIngredientsEditorElement, "#ingredientsToolbar");
+                "QuillFunctions.createQuill", divIngredientsEditorElement, "#ingredientsToolbar", "Ingredients");
             await JSRuntime.InvokeAsync<string>(
-                "QuillFunctions.createQuill", divDirectionsEditorElement, "#directionsToolbar");
+                "QuillFunctions.createQuill", divDirectionsEditorElement, "#directionsToolbar", "Directions");
         }
     }
 }
