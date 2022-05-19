@@ -11,11 +11,11 @@
 
 <MudGrid>
     <MudItem xs="12" sm="12" lg="12">
-        <MudPaper Class="pa-4 mt-2">
+        <MudPaper Class="pa-4">
             <MudForm @ref="form" @bind-IsValid="@isValid">
                 <MudGrid>
                     <MudItem xs="12" sm="12" md="6" lg="6">
-                        <MudTextField T="string" Label="Title" @bind-value="model.Title" Required="true" RequiredError="Title is required!" />
+                        <MudTextField T="string" Label="Title" Immediate="true" @bind-value="model.Title" Required="true" RequiredError="Title is required!" />
                     </MudItem>
                     <MudItem xs="12" sm="12" md="6" lg="6">
                         <MudTextField T="string" Label="Author" @bind-value="model.Author" />

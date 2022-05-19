@@ -5,17 +5,17 @@
 @using System.Text.RegularExpressions
 
 @inherits LayoutComponentBase
-<MudGrid>
-    <MudItem xs="12" sm="7">
+<MudGrid Justify="Justify.Center">
+    <MudItem lg="6" >
         <MudPaper Class="pa-4">
             <MudForm @ref="form" @bind-IsValid="@isValid">
                 <div class="alert alert-info">
                     Username: user@example.com<br />
                     Password: string
                 </div>
-                <MudTextField T="string" Label="Username" @bind-value="model.Email" Required="true" RequiredError="User name is required!" />
-                <MudTextField T="string" Label="Password" @bind-value="model.Password"
-                              InputType="InputType.Password" Required="true"
+                <MudTextField T="string" Label="Username" @bind-value="model.Email" Immediate="true" Required="true" RequiredError="User name is required!" />
+                <MudTextField T="string" Label="Password" @bind-value="model.Password" 
+                              InputType="InputType.Password" Required="true" Immediate="true"
                               RequiredError="Password is required!" />
                 <div class="d-flex align-center justify-space-between mt-6">
                     <MudButton Disabled="@(loading || !isValid)" OnClick="HandleSubmit" Class="ml-auto" Variant="Variant.Filled" Color="Color.Primary">
@@ -48,6 +48,7 @@
 
     protected override void OnInitialized()
     {
+        Console.WriteLine("Login initialized with user: {0}", AuthenticationService.User);
         // redirect to home if already logged in
         if (AuthenticationService.User != null)
         {
