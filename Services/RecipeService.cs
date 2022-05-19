@@ -7,19 +7,24 @@ namespace BlazorApp.Services;
 
 public interface IRecipeService
 {
+    Task<List<CategoryModel>> GetCategories();
     Task<List<RecipeModel>> GetRecipes();
     Task<RecipeModel> Create(CreateRecipeRequest request);
 }
 
 public class RecipeService : IRecipeService
 {
-    private IHttpService _httpService;
+    private readonly IHttpService _httpService;
 
     public RecipeService(IHttpService httpService)
     {
         _httpService = httpService;
     }
 
+    public async Task<List<CategoryModel>> GetCategories()
+    {
+        return await _httpService.Get<List<CategoryModel>>("recipes/categories");
+    }
     public async Task<List<RecipeModel>> GetRecipes()
     {
         return await _httpService.Get<List<RecipeModel>>("recipes/get-all");

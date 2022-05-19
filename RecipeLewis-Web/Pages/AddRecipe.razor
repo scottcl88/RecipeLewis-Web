@@ -11,7 +11,7 @@
 
 <MudGrid>
     <MudItem xs="12" sm="12" lg="12">
-        <MudPaper Class="pa-4">
+        <MudPaper Class="pa-4 mt-2">
             <MudForm @ref="form" @bind-IsValid="@isValid">
                 <MudGrid>
                     <MudItem xs="12" sm="12" md="6" lg="6">
@@ -21,10 +21,11 @@
                         <MudTextField T="string" Label="Author" @bind-value="model.Author" />
                     </MudItem>
                     <MudItem xs="12" sm="12" md="6" lg="6">
-                        <MudSelect T="string" Label="Category" AnchorOrigin="Origin.BottomCenter">
-                            <MudSelectItem Value="@("Cappuccino")" />
-                            <MudSelectItem Value="@("Cafe Latte")" />
-                            <MudSelectItem Value="@("Espresso")" />
+                        <MudSelect T="CategoryModel" @bind-Value="model.Category" Label="Category" AnchorOrigin="Origin.BottomCenter">
+                            @foreach (var category in categories)
+                            {
+                                <MudSelectItem Value="@category"></MudSelectItem>
+                            }
                         </MudSelect>
                     </MudItem>
                     <MudItem xs="12" sm="12" md="6" lg="6">
@@ -32,15 +33,15 @@
                     </MudItem>
                     <MudItem xs="12" sm="12" md="12" lg="12">
                         <label class="mud-input-label">Tags</label>
-                        <MudChipSet AllClosable="true" OnClose="Closed">
-                            @foreach (var value in tags)
+                        <MudChipSet AllClosable="true" OnClose="RemoveTag">
+                            @foreach (var value in model.Tags)
                             {
-                                <MudChip Text="@value"></MudChip>
+                                <MudChip Text="@value.Name"></MudChip>
                             }
                         </MudChipSet>
                     </MudItem>
                     <MudItem xs="12" sm="12" md="6" lg="6">
-                        <MudTextField T="string" Label="Tag" @bind-value="tagInput" Style="display: inline-block"/>
+                        <MudTextField T="string" Label="New Tag" Immediate="true" OnKeyPress="OnTagKeyPress" Clearable="true" @ref="tagReference"/>
                         <MudButton Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Add" OnClick="AddTag" Color="Color.Secondary" Style="margin-top: 15px;">Add</MudButton>
                     </MudItem>
                     <MudItem xs="12" sm="12" md="12" lg="12">
@@ -146,7 +147,7 @@
                         </div>
                         <div @ref="@divDirectionsEditorElement" />
                     </MudItem>
-                    <MudItem xs="12" sm="12" md="12" lg="12" class="mt-12">
+                    <MudItem xs="12" sm="12" md="12" lg="12" class="ma-auto">
                         <MudButton Disabled="@(loading || !isValid)" OnClick="HandleSubmit" Class="ml-auto" Variant="Variant.Filled" Color="Color.Primary">
                             @if (loading)
                             {
@@ -177,17 +178,28 @@
     private ElementReference divDirectionsEditorElement;
     private string EditorContent;
     private string EditorHTMLContent;
-    private string tagInput;
     private bool EditorEnabled = true;
     List<string> tags = new List<string>();
-    public void Closed(MudChip chip) => tags.Remove(chip.Text);
+    List<CategoryModel> categories = new List<CategoryModel>();
+    private MudTextField<string> tagReference;
 
     public void AddTag()
     {
-        tags.Add(tagInput);
-        tagInput = "";
+        model.Tags.Add(new TagModel(tagReference.Text));
+        tagReference.Clear();
+        StateHasChanged();
     }
-
+    public void RemoveTag(MudChip chip)
+    {
+        model.Tags.RemoveAll(x => x.Name == chip.Text);
+    }
+    public void OnTagKeyPress(KeyboardEventArgs e)
+    {
+        if (e.Code == "Enter" || e.Code == "NumpadEnter")
+        {
+            AddTag();
+        }
+    }
     private async void HandleSubmit()
     {
         loading = true;
@@ -226,5 +238,12 @@
             await JSRuntime.InvokeAsync<string>(
                 "QuillFunctions.createQuill", divDirectionsEditorElement, "#directionsToolbar", "Directions");
         }
+    }
+    protected override async Task OnInitializedAsync()
+    {
+        loading = true;
+        categories = await RecipeService.GetCategories();
+        model.Category = categories[0];
+        loading = false;
     }
 }
