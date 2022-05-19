@@ -34,6 +34,13 @@ a, .btn-link {
     color: red;
 }
 
+@media screen and (min-width: 1280px) {
+    .position-fixed-lg {
+        position: fixed;
+    }
+}
+
+
 #blazor-error-ui {
     background: lightyellow;
     bottom: 0;

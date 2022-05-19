@@ -10,7 +10,7 @@
 <PageTitle>Add Recipe</PageTitle>
 
 <MudGrid>
-    <MudItem xs="12" sm="12" lg="12">
+    <MudItem xs="12" sm="12" lg="10">
         <MudPaper Class="pa-4">
             <MudForm @ref="form" @bind-IsValid="@isValid">
                 <MudGrid>
@@ -41,7 +41,7 @@
                         </MudChipSet>
                     </MudItem>
                     <MudItem xs="12" sm="12" md="6" lg="6">
-                        <MudTextField T="string" Label="New Tag" Immediate="true" OnKeyPress="OnTagKeyPress" Clearable="true" @ref="tagReference"/>
+                        <MudTextField T="string" Label="New Tag" Immediate="true" OnKeyPress="OnTagKeyPress" Clearable="true" @ref="tagReference" />
                         <MudButton Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Add" OnClick="AddTag" Color="Color.Secondary" Style="margin-top: 15px;">Add</MudButton>
                     </MudItem>
                     <MudItem xs="12" sm="12" md="12" lg="12">
@@ -147,21 +147,55 @@
                         </div>
                         <div @ref="@divDirectionsEditorElement" />
                     </MudItem>
-                    <MudItem xs="12" sm="12" md="12" lg="12" class="ma-auto">
-                        <MudButton Disabled="@(loading || !isValid)" OnClick="HandleSubmit" Class="ml-auto" Variant="Variant.Filled" Color="Color.Primary">
-                            @if (loading)
+                    <MudItem xs="12" sm="12" md="12" lg="12">
+                        <MudPaper @ondragenter="@SetDragClass" @ondragleave="@ClearDragClass" @ondragend="@ClearDragClass" Height="100px" Outlined="true" Class="@DragClass">
+                            @if (!Clearing)
                             {
-                                <MudProgressCircular Class="ms-n1" Size="Size.Small" Indeterminate="true" />
-                                <MudText Class="ms-2">Working...</MudText>
+                                <InputFile OnChange="OnInputFileChanged" multiple class="absolute mud-width-full mud-height-full overflow-hidden z-2" accept=".jpg, .jpeg, .png" style="opacity:0;" />
                             }
-                            else
-                            {
-                                <MudText>Add</MudText>
-                            }
-                        </MudButton>
+                            <MudText Typo="Typo.subtitle2">Drag and drop files or click here</MudText>
+                            <MudChipSet AllClosable="true" OnClose="RemoveFile">
+                                @foreach (var file in fileNames)
+                                {
+                                    <MudChip Color="Color.Dark" Text="@file" />
+                                }
+                            </MudChipSet>
+                        </MudPaper>
                     </MudItem>
                 </MudGrid>
             </MudForm>
+        </MudPaper>
+    </MudItem>
+    <MudItem xs="12" sm="12" md="2" lg="2">
+        <MudPaper Class="pa-4 position-fixed-lg" Style="">
+            <MudGrid Justify="Justify.Center">
+                <MudItem xs="12" sm="12" md="12" lg="12">
+                    <MudButton Disabled="@(loading || !isValid)" OnClick="HandleSubmit" Variant="Variant.Filled" Color="Color.Primary">
+                        @if (loading)
+                        {
+                            <MudProgressCircular Class="ms-n1" Size="Size.Small" Indeterminate="true" />
+                            <MudText Class="ms-2">Working...</MudText>
+                        }
+                        else
+                        {
+                            <MudText>Save</MudText>
+                        }
+                    </MudButton>
+                </MudItem>
+                <MudItem xs="12" sm="12" md="12" lg="12">
+                    <MudButton Disabled="@(loading || !isValid)" OnClick="HandleSubmit" Variant="Variant.Filled" Color="Color.Error">
+                        @if (loading)
+                        {
+                            <MudProgressCircular Class="ms-n1" Size="Size.Small" Indeterminate="true" />
+                            <MudText Class="ms-2">Working...</MudText>
+                        }
+                        else
+                        {
+                            <MudText>Delete</MudText>
+                        }
+                    </MudButton>
+                </MudItem>
+            </MudGrid>
         </MudPaper>
     </MudItem>
 </MudGrid>
@@ -182,6 +216,44 @@
     List<string> tags = new List<string>();
     List<CategoryModel> categories = new List<CategoryModel>();
     private MudTextField<string> tagReference;
+    private bool Clearing = false;
+    private static string DefaultDragClass = "relative rounded-lg border-2 border-dashed pa-4 mud-width-full mud-height-full";
+    private string DragClass = DefaultDragClass;
+    private List<string> fileNames = new List<string>();
+
+    private void OnInputFileChanged(InputFileChangeEventArgs e)
+    {
+        ClearDragClass();
+        var files = e.GetMultipleFiles();
+        foreach (var file in files)
+        {
+            fileNames.Add(file.Name);
+        }
+    }
+
+    private async Task Clear()
+    {
+        Clearing = true;
+        fileNames.Clear();
+        ClearDragClass();
+        await Task.Delay(100);
+        Clearing = false;
+    }
+
+    private void SetDragClass()
+    {
+        DragClass = $"{DefaultDragClass} mud-border-primary";
+    }
+
+    private void ClearDragClass()
+    {
+        DragClass = DefaultDragClass;
+    }
+    public void RemoveFile(MudChip chip)
+    {
+        fileNames.RemoveAll(x => x == chip.Text);
+        model.Documents.RemoveAll(x => x.FileName == chip.Text);
+    }
 
     public void AddTag()
     {
@@ -243,7 +315,7 @@
     {
         loading = true;
         categories = await RecipeService.GetCategories();
-        model.Category = categories[0];
+        model.Category = categories?.FirstOrDefault();
         loading = false;
     }
 }

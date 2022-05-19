@@ -35,11 +35,11 @@ namespace BlazorApp.Services
             _navigationManager = navigationManager;
             _authUser = authUser;
             _localStorageService = localStorageService;
-            Console.WriteLine("AuthenticationService constructed");
         }
 
         public async Task Initialize()
         {
+            Console.WriteLine("AuthService Initialized");
             _authUser.User = await _localStorageService.GetItem<UserModel>("user");
         }
 
@@ -47,10 +47,12 @@ namespace BlazorApp.Services
         {
             _authUser.User = await _httpService.Post<UserModel>("users/authenticate", new { Email = email, Password = password });
             await _localStorageService.SetItem("user", _authUser.User);
+            Console.WriteLine("AuthService user set");
         }
 
         public async Task Logout()
         {
+            Console.WriteLine("AuthService logging out");
             _authUser.User = null;
             await _localStorageService.RemoveItem("user");
             _navigationManager.NavigateTo("login");

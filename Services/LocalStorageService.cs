@@ -13,7 +13,7 @@ namespace BlazorApp.Services
 
     public class LocalStorageService : ILocalStorageService
     {
-        private IJSRuntime _jsRuntime;
+        private readonly IJSRuntime _jsRuntime;
 
         public LocalStorageService(IJSRuntime jsRuntime)
         {
@@ -23,7 +23,6 @@ namespace BlazorApp.Services
         public async Task<T> GetItem<T>(string key)
         {
             var json = await _jsRuntime.InvokeAsync<string>("localStorage.getItem", key);
-            Console.WriteLine("JSON getItem result: ", json);
             if (json == null)
                 return default;
 

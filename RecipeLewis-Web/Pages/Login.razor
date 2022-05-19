@@ -1,6 +1,7 @@
 ﻿@page "/login"
 @using System.ComponentModel.DataAnnotations
 @inject IAuthenticationService AuthenticationService
+@inject ILocalStorageService LocalStorageService
 @inject NavigationManager NavigationManager
 @using System.Text.RegularExpressions
 
@@ -46,11 +47,11 @@
     private string error;
     private bool showError;
 
-    protected override void OnInitialized()
+    protected override async void OnInitialized()
     {
-        Console.WriteLine("Login initialized with user: {0}", AuthenticationService.User);
+        var user = await LocalStorageService.GetItem<UserModel>("user");
         // redirect to home if already logged in
-        if (AuthenticationService.User != null)
+        if (user != null && AuthenticationService.User != null)
         {
             NavigationManager.NavigateTo("");
         }
