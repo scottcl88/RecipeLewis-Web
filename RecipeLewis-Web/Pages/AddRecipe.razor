@@ -1,11 +1,13 @@
-﻿@page "/add-recipe"
+﻿@page "/recipe"
 @using RecipeLewis.Models
 @using RecipeLewis.Models.Requests
+@using AutoMapper
 @attribute [Authorize]
 @inject IRecipeService RecipeService
 @inject ISnackbar Snackbar
 @inject NavigationManager NavigationManager
 @inject IJSRuntime JSRuntime
+@inject IMapper Mapper
 
 <PageTitle>Add Recipe</PageTitle>
 
@@ -15,13 +17,13 @@
             <MudForm @ref="form" @bind-IsValid="@isValid">
                 <MudGrid>
                     <MudItem xs="12" sm="12" md="6" lg="6">
-                        <MudTextField T="string" Label="Title" Immediate="true" @bind-value="model.Title" Required="true" RequiredError="Title is required!" />
+                        <MudTextField T="string" Label="Title" Immediate="true" @bind-Value="@model.Title" Required="true" RequiredError="Title is required!" />
                     </MudItem>
                     <MudItem xs="12" sm="12" md="6" lg="6">
-                        <MudTextField T="string" Label="Author" @bind-value="model.Author" />
+                        <MudTextField T="string" Label="Author" @bind-Value="@model.Author" />
                     </MudItem>
                     <MudItem xs="12" sm="12" md="6" lg="6">
-                        <MudSelect T="CategoryModel" @bind-Value="model.Category" Label="Category" AnchorOrigin="Origin.BottomCenter">
+                        <MudSelect T="CategoryModel" @bind-Value="@model.Category" Label="Category" AnchorOrigin="Origin.BottomCenter">
                             @foreach (var category in categories)
                             {
                                 <MudSelectItem Value="@category"></MudSelectItem>
@@ -29,7 +31,7 @@
                         </MudSelect>
                     </MudItem>
                     <MudItem xs="12" sm="12" md="6" lg="6">
-                        <MudTextField T="string" Label="Yield" @bind-value="model.Yield" />
+                        <MudTextField T="string" Label="Yield" @bind-Value="@model.Yield" />
                     </MudItem>
                     <MudItem xs="12" sm="12" md="12" lg="12">
                         <label class="mud-input-label">Tags</label>
@@ -45,18 +47,18 @@
                         <MudButton Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Add" OnClick="AddTag" Color="Color.Secondary" Style="margin-top: 15px;">Add</MudButton>
                     </MudItem>
                     <MudItem xs="12" sm="12" md="12" lg="12">
-                        <MudTextField T="string" Label="Description" @bind-value="model.Description" Lines="3" />
-                        <MudTextField T="string" Label="Storage" @bind-value="model.Storage" Lines="3" />
-                        <MudTextField T="string" Label="Nutrition" @bind-value="model.Nutrition" />
+                        <MudTextField T="string" Label="Description" @bind-Value="@model.Description" Lines="3" />
+                        <MudTextField T="string" Label="Storage" @bind-Value="@model.Storage" Lines="3" />
+                        <MudTextField T="string" Label="Nutrition" @bind-Value="@model.Nutrition" />
                     </MudItem>
                     <MudItem xs="12" sm="12" md="4" lg="4">
-                        <MudTimePicker Label="Prep Time" @bind-Time="model.PrepTime" />
+                        <MudTimePicker Label="Prep Time" @bind-Time="@model.PrepTime" />
                     </MudItem>
                     <MudItem xs="12" sm="12" md="4" lg="4">
-                        <MudTimePicker Label="Cook Time" @bind-Time="model.CookTime" />
+                        <MudTimePicker Label="Cook Time" @bind-Time="@model.CookTime" />
                     </MudItem>
                     <MudItem xs="12" sm="12" md="4" lg="4">
-                        <MudTimePicker Label="Total Time" @bind-Time="model.TotalTime" />
+                        <MudTimePicker Label="Total Time" @bind-Time="@model.TotalTime" />
                     </MudItem>
                     <MudItem xs="12" sm="12" md="12" lg="12" class="ma-auto">
                         <label class="mud-input-label">Ingredients</label>
@@ -220,6 +222,7 @@
     private static string DefaultDragClass = "relative rounded-lg border-2 border-dashed pa-4 mud-width-full mud-height-full";
     private string DragClass = DefaultDragClass;
     private List<string> fileNames = new List<string>();
+    private int recipeId;
 
     private void OnInputFileChanged(InputFileChangeEventArgs e)
     {
@@ -282,7 +285,17 @@
             //strSavedContent = await JSRuntime.InvokeAsync<string>(
             //"QuillFunctions.getQuillContent", divDirectionsEditorElement);
             showError = false;
-            var result = await RecipeService.Create(model);
+            RecipeModel result = null;
+            if (recipeId <= 0)
+            {
+                result = await RecipeService.Create(model);
+            }
+            else
+            {
+                var updateRequest = Mapper.Map<UpdateRecipeRequest>(model);
+                updateRequest.Id = new RecipeId(recipeId);
+                result = await RecipeService.Update(updateRequest);
+            }
             if (result == null)
             {
                 Snackbar.Add("An error occured!", Severity.Error, config => { config.ShowCloseIcon = true; });
@@ -298,6 +311,8 @@
             error = ex.Message;
             showError = true;
             loading = false;
+            Snackbar.Add("An error occured!", Severity.Error, config => { config.ShowCloseIcon = true; });
+            Console.WriteLine("Error: {0}", ex.Message);
             StateHasChanged();
         }
     }
@@ -305,17 +320,24 @@
     {
         if (firstRender)
         {
+            loading = true;
             await JSRuntime.InvokeAsync<string>(
                 "QuillFunctions.createQuill", divIngredientsEditorElement, "#ingredientsToolbar", "Ingredients");
             await JSRuntime.InvokeAsync<string>(
                 "QuillFunctions.createQuill", divDirectionsEditorElement, "#directionsToolbar", "Directions");
+
+            var recipeModel = await RecipeService.GetRecipe(recipeId);
+            Console.WriteLine("recipeModel set: {0}", recipeModel);
+            model = Mapper.Map<CreateRecipeRequest>(recipeModel);
+            Console.WriteLine("Model set: {0}", model.Title);
+            categories = await RecipeService.GetCategories();
+            model.Category = categories?.FirstOrDefault();
+            loading = false;
+            StateHasChanged();
         }
     }
     protected override async Task OnInitializedAsync()
     {
-        loading = true;
-        categories = await RecipeService.GetCategories();
-        model.Category = categories?.FirstOrDefault();
-        loading = false;
+        recipeId = Int32.Parse(NavigationManager.QueryString("recipeId"));
     }
 }

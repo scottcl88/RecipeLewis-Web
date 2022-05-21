@@ -9,7 +9,9 @@ public interface IRecipeService
 {
     Task<List<CategoryModel>> GetCategories();
     Task<List<RecipeModel>> GetRecipes();
+    Task<RecipeModel> GetRecipe(int recipeId);
     Task<RecipeModel> Create(CreateRecipeRequest request);
+    Task<RecipeModel> Update(UpdateRecipeRequest request);
 }
 
 public class RecipeService : IRecipeService
@@ -29,8 +31,16 @@ public class RecipeService : IRecipeService
     {
         return await _httpService.Get<List<RecipeModel>>("recipes/get-all");
     }
+    public async Task<RecipeModel> GetRecipe(int recipeId)
+    {
+        return await _httpService.Get<RecipeModel>("recipes/" + recipeId);
+    }
     public async Task<RecipeModel> Create(CreateRecipeRequest request)
     {
         return await _httpService.Post<RecipeModel>("recipes/create", request);
+    }
+    public async Task<RecipeModel> Update(UpdateRecipeRequest request)
+    {
+        return await _httpService.Put<RecipeModel>("recipes/update", request);
     }
 }

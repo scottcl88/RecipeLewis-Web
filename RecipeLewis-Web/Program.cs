@@ -13,6 +13,8 @@ var services = builder.Services;
 
 services.AddMudServices();
 
+services.AddAutoMapper(typeof(OrganizationProfile));
+
 services
     .AddScoped<IAuthenticationService, AuthenticationService>()
     .AddScoped<IUserService, UserService>()

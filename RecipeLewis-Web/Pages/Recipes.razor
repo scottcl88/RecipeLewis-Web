@@ -5,7 +5,7 @@
 
 <PageTitle>Recipes</PageTitle>
 
-<MudButton Href="/add-recipe" Class="ml-auto" Variant="Variant.Filled" Color="Color.Primary">Add Recipe</MudButton>
+<MudButton Href="/recipe" Class="ml-auto" Variant="Variant.Filled" Color="Color.Primary">Add Recipe</MudButton>
 <MudTable Items="@recipes" Hover="true" Filter="new Func<RecipeModel,bool>(FilterFunc1)" @bind-SelectedItem="selectedItem1">
     <ToolBarContent>
         <MudText Typo="Typo.h6">Recipes</MudText>
@@ -14,9 +14,13 @@
     </ToolBarContent>
     <HeaderContent>
         <MudTh>Title</MudTh>
+        <MudTh>...</MudTh>
     </HeaderContent>
     <RowTemplate>
         <MudTd DataLabel="Nr">@context.Title</MudTd>
+        <MudTd>
+            <MudButton Href=@("/recipe?recipeId="+context.RecipeId) >Edit</MudButton>
+        </MudTd>
     </RowTemplate>
     <PagerContent>
         <MudTablePager />
