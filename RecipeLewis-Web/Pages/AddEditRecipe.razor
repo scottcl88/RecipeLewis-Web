@@ -8,8 +8,9 @@
 @inject NavigationManager NavigationManager
 @inject IJSRuntime JSRuntime
 @inject IMapper Mapper
+@inject IDialogService DialogService
 
-<PageTitle>Add Recipe</PageTitle>
+<PageTitle>@(recipeId <= 0 ? "Add" : "Edit") Recipe</PageTitle>
 
 <MudGrid>
     <MudItem xs="12" sm="12" lg="10">
@@ -184,8 +185,8 @@
                         }
                     </MudButton>
                 </MudItem>
-                <MudItem xs="12" sm="12" md="12" lg="12">
-                    <MudButton Disabled="@(loading || !isValid)" OnClick="HandleSubmit" Variant="Variant.Filled" Color="Color.Error">
+                <MudItem xs="12" sm="12" md="12" lg="12" hidden="@(recipeId <= 0)">
+                    <MudButton Disabled="@loading" OnClick="HandleDelete" Variant="Variant.Filled" Color="Color.Error">
                         @if (loading)
                         {
                             <MudProgressCircular Class="ms-n1" Size="Size.Small" Indeterminate="true" />
@@ -280,10 +281,15 @@
         loading = true;
         try
         {
-            //strSavedContent = await JSRuntime.InvokeAsync<string>(
-            //"QuillFunctions.getQuillContent", divIngredientsEditorElement);
-            //strSavedContent = await JSRuntime.InvokeAsync<string>(
-            //"QuillFunctions.getQuillContent", divDirectionsEditorElement);
+            model.IngredientsHTML = await JSRuntime.InvokeAsync<string>(
+            "QuillFunctions.getQuillHTML", divIngredientsEditorElement);
+            model.DirectionsHTML = await JSRuntime.InvokeAsync<string>(
+            "QuillFunctions.getQuillHTML", divDirectionsEditorElement);
+
+            model.Ingredients = await JSRuntime.InvokeAsync<string>(
+            "QuillFunctions.getQuillContent", divIngredientsEditorElement);
+            model.Directions = await JSRuntime.InvokeAsync<string>(
+            "QuillFunctions.getQuillContent", divDirectionsEditorElement);
             showError = false;
             RecipeModel result = null;
             if (recipeId <= 0)
@@ -316,22 +322,63 @@
             StateHasChanged();
         }
     }
+    private async void HandleDelete()
+    {
+        var dialog = DialogService.Show<DeleteDialog>("Delete Recipe");
+        var result = await dialog.Result;
+
+        if (!result.Cancelled)
+        {
+            DoDelete();
+        }
+    }
+    private async void DoDelete()
+    {
+        loading = true;
+        try
+        {
+            var result = await RecipeService.Delete(recipeId);
+            if (result == null)
+            {
+                Snackbar.Add("An error occured!", Severity.Error, config => { config.ShowCloseIcon = true; });
+            }
+            else
+            {
+                Snackbar.Add("Successfully deleted recipe!", Severity.Success, config => { config.ShowCloseIcon = true; });
+                NavigationManager.NavigateTo("/recipes");
+            }
+        }
+        catch (Exception ex)
+        {
+            error = ex.Message;
+            showError = true;
+            loading = false;
+            Snackbar.Add("An error occured!", Severity.Error, config => { config.ShowCloseIcon = true; });
+            Console.WriteLine("Error: {0}", ex.Message);
+            StateHasChanged();
+        }
+    }
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
             loading = true;
+            var recipeModel = await RecipeService.GetRecipe(recipeId);
+            model = Mapper.Map<CreateRecipeRequest>(recipeModel);
+            categories = await RecipeService.GetCategories();
+            if (recipeId <= 0)
+            {
+                model.Category = categories?.FirstOrDefault();
+            }
             await JSRuntime.InvokeAsync<string>(
                 "QuillFunctions.createQuill", divIngredientsEditorElement, "#ingredientsToolbar", "Ingredients");
             await JSRuntime.InvokeAsync<string>(
                 "QuillFunctions.createQuill", divDirectionsEditorElement, "#directionsToolbar", "Directions");
 
-            var recipeModel = await RecipeService.GetRecipe(recipeId);
-            Console.WriteLine("recipeModel set: {0}", recipeModel);
-            model = Mapper.Map<CreateRecipeRequest>(recipeModel);
-            Console.WriteLine("Model set: {0}", model.Title);
-            categories = await RecipeService.GetCategories();
-            model.Category = categories?.FirstOrDefault();
+            var quillDelta = await JSRuntime.InvokeAsync<object>(
+                "QuillFunctions.loadQuillContent", divIngredientsEditorElement, model.Ingredients);
+            var quillDelta2 = await JSRuntime.InvokeAsync<object>(
+                "QuillFunctions.loadQuillContent", divDirectionsEditorElement, model.Directions);
             loading = false;
             StateHasChanged();
         }

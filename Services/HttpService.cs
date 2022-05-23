@@ -18,6 +18,7 @@ namespace BlazorApp.Services
         Task<T> Get<T>(string uri);
         Task<T> Post<T>(string uri, object value);
         Task<T> Put<T>(string uri, object value);
+        Task<T> Delete<T>(string uri);
     }
 
     public class HttpService : IHttpService
@@ -57,6 +58,11 @@ namespace BlazorApp.Services
         {
             var request = new HttpRequestMessage(HttpMethod.Put, uri);
             request.Content = new StringContent(JsonSerializer.Serialize(value), Encoding.UTF8, "application/json");
+            return await sendRequest<T>(request);
+        }
+        public async Task<T> Delete<T>(string uri)
+        {
+            var request = new HttpRequestMessage(HttpMethod.Delete, uri);
             return await sendRequest<T>(request);
         }
 

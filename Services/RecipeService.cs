@@ -12,6 +12,7 @@ public interface IRecipeService
     Task<RecipeModel> GetRecipe(int recipeId);
     Task<RecipeModel> Create(CreateRecipeRequest request);
     Task<RecipeModel> Update(UpdateRecipeRequest request);
+    Task<bool> Delete(int recipeId);
 }
 
 public class RecipeService : IRecipeService
@@ -42,5 +43,9 @@ public class RecipeService : IRecipeService
     public async Task<RecipeModel> Update(UpdateRecipeRequest request)
     {
         return await _httpService.Put<RecipeModel>("recipes/update", request);
+    }
+    public async Task<bool> Delete(int recipeId)
+    {
+        return await _httpService.Delete<bool>("recipes/"+recipeId);
     }
 }
