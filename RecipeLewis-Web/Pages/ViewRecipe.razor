@@ -1,0 +1,136 @@
+﻿@page "/recipe/view"
+@using RecipeLewis.Models
+@using RecipeLewis.Models.Requests
+@using Models.Results
+@using AutoMapper
+@using System.Net.Http.Headers
+@attribute [Authorize]
+@inject IRecipeService RecipeService
+@inject IDocumentService DocumentService
+@inject IAuthenticationService AuthenticationService
+@inject ISnackbar Snackbar
+@inject NavigationManager NavigationManager
+@inject IJSRuntime JSRuntime
+@inject IMapper Mapper
+@inject IDialogService DialogService
+
+<PageTitle>@model.Title</PageTitle>
+
+<MudGrid>
+    <MudItem xs="12" sm="12" lg="10">
+        <MudPaper Class="pa-4">
+            <MudForm @ref="form">
+                <MudGrid>
+                    <MudItem xs="12" sm="12" md="6" lg="6">
+                        <MudTextField T="string" Label="Title" ReadOnly="true" @bind-Value="@model.Title" />
+                    </MudItem>
+                    <MudItem xs="12" sm="12" md="6" lg="6">
+                        <MudTextField T="string" Label="Author" ReadOnly="true" @bind-Value="@model.Author" />
+                    </MudItem>
+                    <MudItem xs="12" sm="12" md="6" lg="6">
+                        <MudInputLabel>Category</MudInputLabel>
+                        <MudText>@model.Category?.Name</MudText>
+                    </MudItem>
+                    <MudItem xs="12" sm="12" md="6" lg="6">
+                        <MudTextField T="string" Label="Yield" ReadOnly="true"@bind-Value="@model.Yield" />
+                    </MudItem>
+                    <MudItem xs="12" sm="12" md="12" lg="12">
+                        <label class="mud-input-label">Tags</label>
+                        <MudChipSet>
+                            @foreach (var value in model.Tags)
+                            {
+                                <MudChip Text="@value.Name"></MudChip>
+                            }
+                        </MudChipSet>
+                    </MudItem>
+                    <MudItem xs="12" sm="12" md="12" lg="12">
+                        <MudTextField T="string" Label="Description" ReadOnly="true" @bind-Value="@model.Description" Lines="3" />
+                        <MudTextField T="string" Label="Storage" ReadOnly="true" @bind-Value="@model.Storage" Lines="3" />
+                        <MudTextField T="string" Label="Nutrition" ReadOnly="true" @bind-Value="@model.Nutrition" />
+                    </MudItem>
+                    <MudItem xs="12" sm="12" md="4" lg="4">
+                        <MudTimePicker Label="Prep Time" ReadOnly="true" @bind-Time="@model.PrepTime" />
+                    </MudItem>
+                    <MudItem xs="12" sm="12" md="4" lg="4">
+                        <MudTimePicker Label="Cook Time" ReadOnly="true" @bind-Time="@model.CookTime" />
+                    </MudItem>
+                    <MudItem xs="12" sm="12" md="4" lg="4">
+                        <MudTimePicker Label="Total Time" ReadOnly="true" @bind-Time="@model.TotalTime" />
+                    </MudItem>
+                    <MudItem xs="12" sm="12" md="12" lg="12" class="ma-auto">
+                        <label class="mud-input-label">Ingredients</label>
+                        <div id="ingredients">
+                            <MudText>@((MarkupString)model.IngredientsHTML)</MudText>
+                        </div>
+
+                    </MudItem>
+                    <MudItem xs="12" sm="12" md="12" lg="12" class="ma-auto">
+                        <label class="mud-input-label">Directions</label>
+                        <div id="directions">
+                            <MudText>@((MarkupString)model.DirectionsHTML)</MudText>
+                        </div>
+                    </MudItem>
+                    <MudItem xs="12" sm="12" md="12" lg="12">
+                        <MudPaper Outlined="true">                          
+                            @foreach (var file in documents)
+                            {
+                                <MudItem xs="12" sm="12" md="12" lg="3"> 
+                                    <MudImage Src="@($"https://localhost:7039/api/documents/view/{recipeId}/{file.DocumentId}")" ObjectFit="ObjectFit.Contain" Fluid="true" Alt="@file.Name" Elevation="25" Class="rounded-lg" />
+                                </MudItem>
+                            }
+                        </MudPaper>
+                    </MudItem>
+                </MudGrid>
+            </MudForm>
+        </MudPaper>
+    </MudItem>
+    <MudItem xs="12" sm="12" md="2" lg="2">
+        <MudPaper Class="pa-4 position-fixed-lg" Style="">
+            <MudGrid Justify="Justify.Center">
+                <MudItem xs="12" sm="12" md="12" lg="12">
+                    <MudButton Disabled="@(loading)" OnClick="HandleSave" Variant="Variant.Filled" Color="Color.Primary">
+                        @if (loading)
+                        {
+                            <MudProgressCircular Class="ms-n1" Size="Size.Small" Indeterminate="true" />
+                            <MudText Class="ms-2">Working...</MudText>
+                        }
+                        else
+                        {
+                            <MudText>Print</MudText>
+                        }
+                    </MudButton>
+                </MudItem>
+            </MudGrid>
+        </MudPaper>
+    </MudItem>
+</MudGrid>
+
+@code {
+    private MudForm form;
+    private string error;
+    private bool showError;
+    private bool loading;
+    RecipeModel model = new RecipeModel();
+    List<DocumentModel> documents = new List<DocumentModel>();
+    private int recipeId;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            loading = true;
+            model = await RecipeService.GetRecipe(recipeId);
+            documents = model.Documents;          
+            loading = false;
+            StateHasChanged();
+        }
+    }
+    protected override async Task OnInitializedAsync()
+    {
+        recipeId = Int32.Parse(NavigationManager.QueryString("recipeId"));
+    }
+    public void HandleSave()
+    {
+        
+    }
+}
