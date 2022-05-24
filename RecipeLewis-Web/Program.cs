@@ -19,6 +19,7 @@ services
     .AddScoped<IAuthenticationService, AuthenticationService>()
     .AddScoped<IUserService, UserService>()
     .AddScoped<IRecipeService, RecipeService>()
+    .AddScoped<IDocumentService, DocumentService>()
     .AddScoped<IHttpService, HttpService>()
     .AddScoped<ILocalStorageService, LocalStorageService>()
     .AddSingleton(new AuthUserSingleton());

@@ -2,7 +2,7 @@
     window.QuillFunctions = {
         createQuill: function (quillElement, toolbarId, placeholder) {
             var options = {
-                debug: 'info',
+                debug: 'error',
                 modules: {
                     toolbar: toolbarId
                 },

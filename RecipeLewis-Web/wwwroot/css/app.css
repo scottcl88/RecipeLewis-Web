@@ -34,6 +34,10 @@ a, .btn-link {
     color: red;
 }
 
+.pointer{
+    cursor: pointer !important;
+}
+
 @media screen and (min-width: 1280px) {
     .position-fixed-lg {
         position: fixed;

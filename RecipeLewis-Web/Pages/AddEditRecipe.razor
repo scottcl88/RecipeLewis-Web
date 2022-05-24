@@ -1,9 +1,13 @@
 ﻿@page "/recipe"
 @using RecipeLewis.Models
 @using RecipeLewis.Models.Requests
+@using Models.Results
 @using AutoMapper
+@using System.Net.Http.Headers
 @attribute [Authorize]
 @inject IRecipeService RecipeService
+@inject IDocumentService DocumentService
+@inject IAuthenticationService AuthenticationService
 @inject ISnackbar Snackbar
 @inject NavigationManager NavigationManager
 @inject IJSRuntime JSRuntime
@@ -151,20 +155,34 @@
                         <div @ref="@divDirectionsEditorElement" />
                     </MudItem>
                     <MudItem xs="12" sm="12" md="12" lg="12">
-                        <MudPaper @ondragenter="@SetDragClass" @ondragleave="@ClearDragClass" @ondragend="@ClearDragClass" Height="100px" Outlined="true" Class="@DragClass">
-                            @if (!Clearing)
+                        <MudPaper @ondragenter="@SetDragClass" @ondragleave="@ClearDragClass" @ondragend="@ClearDragClass" Outlined="true" Class="@DragClass">
+                            @if (!clearing)
                             {
                                 <InputFile OnChange="OnInputFileChanged" multiple class="absolute mud-width-full mud-height-full overflow-hidden z-2" accept=".jpg, .jpeg, .png" style="opacity:0;" />
                             }
-                            <MudText Typo="Typo.subtitle2">Drag and drop files or click here</MudText>
-                            <MudChipSet AllClosable="true" OnClose="RemoveFile">
-                                @foreach (var file in fileNames)
-                                {
-                                    <MudChip Color="Color.Dark" Text="@file" />
-                                }
-                            </MudChipSet>
+                            <MudText Typo="Typo.subtitle2">Drag and drop images or click here</MudText>
+                            @*              <MudChipSet AllClosable="true" OnClose="RemoveFile">
+                            @foreach (var file in fileNames)
+                            {
+                            <MudChip Color="Color.Dark" Text="@file" />
+                            }
+                            </MudChipSet>*@
+                            @foreach (var file in documents)
+                            {
+                                <MudItem xs="12" sm="12" md="12" lg="3">
+                                    <MudBadge Icon="@Icons.Material.Filled.Close" Color="Color.Error" Overlap="true" Bordered="true" Class="mx-6 my-4 pointer" OnClick="() => RemoveFileFromBadge(file.DocumentId)">
+                                        <MudImage Src="@(file.NotUploaded ? file.ImgSrc : $"https://localhost:7039/api/documents/view/{recipeId}/{file.DocumentId}")" ObjectFit="ObjectFit.Contain" Fluid="true" Alt="@file.Name" Elevation="25" Class="rounded-lg" />
+
+                                    </MudBadge>
+                                </MudItem>
+                            }
                         </MudPaper>
                     </MudItem>
+                    @*<MudItem xs="12" sm="12" md="12" lg="12">
+                    <MudPaper Outlined="true">
+
+                    </MudPaper>
+                    </MudItem>*@
                 </MudGrid>
             </MudForm>
         </MudPaper>
@@ -218,30 +236,94 @@
     private bool EditorEnabled = true;
     List<string> tags = new List<string>();
     List<CategoryModel> categories = new List<CategoryModel>();
+    List<DocumentModel> documents = new List<DocumentModel>();
+    List<DocumentModel> documentsToDelete = new List<DocumentModel>();
     private MudTextField<string> tagReference;
-    private bool Clearing = false;
+    private bool clearing = false;
     private static string DefaultDragClass = "relative rounded-lg border-2 border-dashed pa-4 mud-width-full mud-height-full";
     private string DragClass = DefaultDragClass;
     private List<string> fileNames = new List<string>();
     private int recipeId;
+    private long maxFileSize = 26214400;
+    private List<UploadResult> uploadResults = new();
+    private int maxAllowedFiles = 3;
+    private bool upload = false;
+    private MultipartFormDataContent content = new MultipartFormDataContent();
 
-    private void OnInputFileChanged(InputFileChangeEventArgs e)
+    private async Task OnInputFileChanged(InputFileChangeEventArgs e)
     {
+        if (loading || clearing) return;
         ClearDragClass();
-        var files = e.GetMultipleFiles();
-        foreach (var file in files)
+
+        foreach (var file in e.GetMultipleFiles(maxAllowedFiles))
         {
-            fileNames.Add(file.Name);
+            if (uploadResults.SingleOrDefault(
+                f => f.FileName == file.Name) is null)
+            {
+                var documentModel = new DocumentModel()
+                    {
+                        FileName = file.Name,
+                        ContentType = file.ContentType,
+                        ByteSize = file.Size,
+                        CreatedBy = AuthenticationService.User,
+                        NotUploaded = true
+                    };
+                try
+                {
+                    var fileContent =
+                        new StreamContent(file.OpenReadStream(maxAllowedSize: maxFileSize));
+
+                    fileContent.Headers.ContentType =
+                        new MediaTypeHeaderValue(file.ContentType);
+
+                    content.Add(
+                        content: fileContent,
+                        name: "\"files\"",
+                        fileName: file.Name);
+
+                    using (var ms = file.OpenReadStream(maxAllowedSize: maxFileSize))
+                    {
+                        using (var ms2 = new MemoryStream())
+                        {
+                            await ms.CopyToAsync(ms2);
+                            var fileBytes = ms2.ToArray();
+                             documentModel.ImgSrc = "data:image/jpg;base64," + Convert.ToBase64String(fileBytes);
+                        }
+                    }
+                    //using (var ms2 = new MemoryStream())
+                    //{
+                    //    await fileContent.CopyToAsync(ms2);
+                    //    var fileBytes = ms2.ToArray();
+                    //    documentModel.ImgSrc = "data:image/jpg;base64," + Convert.ToBase64String(fileBytes);
+                    //}
+
+                    documents.Add(documentModel);
+                    fileNames.Add(file.Name);
+                    //fileContent.Dispose();
+                    upload = true;
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(
+                        "{0} not uploaded (Err: 6): {1}",
+                        file.Name, ex.Message);
+                }
+            }
         }
     }
 
     private async Task Clear()
     {
-        Clearing = true;
+        clearing = true;
         fileNames.Clear();
+        documentsToDelete.AddRange(documents.Where(x => !x.NotUploaded));
+        documents.Clear();
         ClearDragClass();
         await Task.Delay(100);
-        Clearing = false;
+        clearing = false;
+        upload = false;
+        content.Dispose();
+        content = new MultipartFormDataContent();
     }
 
     private void SetDragClass()
@@ -256,7 +338,15 @@
     public void RemoveFile(MudChip chip)
     {
         fileNames.RemoveAll(x => x == chip.Text);
-        model.Documents.RemoveAll(x => x.FileName == chip.Text);
+        documentsToDelete.AddRange(documents.Where(x => x.FileName == chip.Text && !x.NotUploaded));
+        documents.RemoveAll(x => x.FileName == chip.Text);
+        Console.WriteLine(content);
+    }
+    public void RemoveFileFromBadge(int documentId)
+    {
+        documentsToDelete.AddRange(documents.Where(x => x.DocumentId == documentId && !x.NotUploaded));
+        documents.RemoveAll(x => x.DocumentId == documentId);
+        Console.WriteLine(content);
     }
 
     public void AddTag()
@@ -300,8 +390,24 @@
             {
                 var updateRequest = Mapper.Map<UpdateRecipeRequest>(model);
                 updateRequest.Id = new RecipeId(recipeId);
+                updateRequest.DocumentsToDelete = documentsToDelete;
                 result = await RecipeService.Update(updateRequest);
+                Console.WriteLine("Result: ");
+                Console.WriteLine(result);
             }
+            if (upload)
+            {
+                Console.WriteLine("Result 2");
+                var response = await DocumentService.Upload(content, recipeId);
+                Console.WriteLine("Result 3");
+                //content.Dispose();
+
+                if (response != null)
+                {
+                    uploadResults = uploadResults.Concat(response).ToList();
+                }
+            }
+            Console.WriteLine("Result 0");
             if (result == null)
             {
                 Snackbar.Add("An error occured!", Severity.Error, config => { config.ShowCloseIcon = true; });
@@ -364,6 +470,7 @@
         {
             loading = true;
             var recipeModel = await RecipeService.GetRecipe(recipeId);
+            documents = recipeModel.Documents;
             model = Mapper.Map<CreateRecipeRequest>(recipeModel);
             categories = await RecipeService.GetCategories();
             if (recipeId <= 0)

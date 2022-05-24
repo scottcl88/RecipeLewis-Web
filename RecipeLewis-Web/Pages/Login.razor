@@ -11,10 +11,10 @@
         <MudPaper Class="pa-4">
             <MudForm @ref="form" @bind-IsValid="@isValid">
                 <div class="alert alert-info">
-                    Username: user@example.com<br />
+                    Email: user@example.com<br />
                     Password: string
                 </div>
-                <MudTextField T="string" Label="Username" @bind-value="model.Email" Immediate="true" Required="true" RequiredError="User name is required!" />
+                <MudTextField T="string" Label="Email" @bind-value="model.Email" Immediate="true" Required="true" RequiredError="Email is required!" />
                 <MudTextField T="string" Label="Password" @bind-value="model.Password" 
                               InputType="InputType.Password" Required="true" Immediate="true"
                               RequiredError="Password is required!" />

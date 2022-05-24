@@ -17,6 +17,7 @@ namespace BlazorApp.Services
     {
         Task<T> Get<T>(string uri);
         Task<T> Post<T>(string uri, object value);
+        Task<T> PostForm<T>(string uri, MultipartFormDataContent formData);
         Task<T> Put<T>(string uri, object value);
         Task<T> Delete<T>(string uri);
     }
@@ -51,6 +52,13 @@ namespace BlazorApp.Services
         {
             var request = new HttpRequestMessage(HttpMethod.Post, uri);
             request.Content = new StringContent(JsonSerializer.Serialize(value), Encoding.UTF8, "application/json");
+            return await sendRequest<T>(request);
+        }
+        public async Task<T> PostForm<T>(string uri, MultipartFormDataContent formData)
+        {
+            var request = new HttpRequestMessage(HttpMethod.Post, uri);
+            request.Content = formData;
+            Console.WriteLine("PostForm content set");
             return await sendRequest<T>(request);
         }
 
