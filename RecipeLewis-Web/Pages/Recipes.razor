@@ -6,8 +6,9 @@
 
 <PageTitle>Recipes</PageTitle>
 
-<MudButton Href="/recipe/edit" Class="ml-auto" Variant="Variant.Filled" Color="Color.Primary">Add Recipe</MudButton>
-<MudTable Items="@recipes" Hover="true" Filter="new Func<RecipeModel,bool>(FilterFunc1)" @bind-SelectedItem="selectedItem1">
+<MudButton Href="/recipe/edit" Class="ml-auto mb-2" Variant="Variant.Filled" Color="Color.Primary">Add Recipe</MudButton>
+
+<MudTable Items="@recipes" Hover="true" Filter="new Func<RecipeModel,bool>(FilterFunc1)" @bind-SelectedItem="selectedItem1" Loading="@loading" LoadingProgressColor="Color.Info">
     <ToolBarContent>
         <MudText Typo="Typo.h6">Recipes</MudText>
         <MudSpacer />
@@ -23,10 +24,10 @@
         <MudTd DataLabel="Nr">@context.Title</MudTd>
         <MudTd DataLabel="Nr">@context.Category?.Name</MudTd>
         <MudTd>
-            <MudButton Href=@("/recipe/view?recipeId="+context.RecipeId) >View</MudButton>
+            <MudButton Href=@("/recipe/view?recipeId="+context.RecipeId)>View</MudButton>
         </MudTd>
         <MudTd>
-            <MudButton Href=@("/recipe/edit?recipeId="+context.RecipeId) >Edit</MudButton>
+            <MudButton Href=@("/recipe/edit?recipeId="+context.RecipeId)>Edit</MudButton>
         </MudTd>
     </RowTemplate>
     <PagerContent>
@@ -36,19 +37,22 @@
 
 
 @code {
-    private bool loading;
-    private List<RecipeModel> recipes;
-    private RecipeModel selectedItem1 = null;
+    private bool loading = true;
+    private List<RecipeModel> recipes = new();
+    private RecipeModel selectedItem1;
     private string searchString1 = "";
-    private HashSet<RecipeModel> selectedItems = new HashSet<RecipeModel>();
+    private HashSet<RecipeModel> selectedItems = new();
 
-    protected override async Task OnInitializedAsync()
+    protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        loading = true;
-        recipes = await RecipeService.GetRecipes();
-        loading = false;
+        if (firstRender)
+        {
+            loading = true;
+            recipes = await RecipeService.GetRecipes();
+            loading = false;
+            StateHasChanged();
+        }
     }
-
     private bool FilterFunc1(RecipeModel element) => FilterFunc(element, searchString1);
 
     private bool FilterFunc(RecipeModel element, string searchString)
