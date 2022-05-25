@@ -3,16 +3,13 @@
 @inject NavigationManager NavigationManager
 
 <MudNavMenu>
-    <MudNavLink Href="/" Match="NavLinkMatch.All">Dashboard</MudNavLink>
     <MudNavLink Href="/recipes" Match="NavLinkMatch.Prefix">Recipes</MudNavLink>
-    <MudNavGroup Title="Settings" Expanded="true">
-        <MudNavLink Href="/profile"  Match="NavLinkMatch.Prefix">Profile</MudNavLink>
-        <MudNavLink @onclick="GoLogout"  Match="NavLinkMatch.Prefix">Logout</MudNavLink>
-    </MudNavGroup>
-    <MudNavLink Href="/about"  Match="NavLinkMatch.Prefix">About</MudNavLink>
+    <MudNavLink Href="/about" Match="NavLinkMatch.Prefix">About</MudNavLink>
+    <MudNavLink Href="/profile" Match="NavLinkMatch.Prefix">Profile</MudNavLink>
+    <MudNavLink @onclick="GoLogout" Match="NavLinkMatch.Prefix">Logout</MudNavLink>
 </MudNavMenu>
 
-@code{
+@code {
     public void GoLogout()
     {
         AuthenticationService.Logout();

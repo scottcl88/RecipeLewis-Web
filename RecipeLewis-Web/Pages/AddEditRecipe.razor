@@ -19,7 +19,10 @@
 <MudGrid>
     <MudItem xs="12" sm="12" lg="10">
         <MudPaper Class="pa-4">
-            <MudForm @ref="form" @bind-IsValid="@isValid">
+            <MudItem xs="12" sm="12" md="12" lg="12" hidden="@(!loading)">
+                <MudProgressCircular Color="Color.Primary" Size="Size.Medium" Indeterminate="true" />
+            </MudItem>
+            <MudForm @ref="form" @bind-IsValid="@isValid" hidden="@(loading)">
                 <MudGrid>
                     <MudItem xs="12" sm="12" md="6" lg="6">
                         <MudTextField T="string" Label="Title" Immediate="true" @bind-Value="@model.Title" Required="true" RequiredError="Title is required!" />
@@ -161,12 +164,6 @@
                                 <InputFile OnChange="OnInputFileChanged" multiple class="absolute mud-width-full mud-height-full overflow-hidden z-2" accept=".jpg, .jpeg, .png" style="opacity:0;" />
                             }
                             <MudText Typo="Typo.subtitle2">Drag and drop images or click here</MudText>
-                            @*              <MudChipSet AllClosable="true" OnClose="RemoveFile">
-                            @foreach (var file in fileNames)
-                            {
-                            <MudChip Color="Color.Dark" Text="@file" />
-                            }
-                            </MudChipSet>*@
                             @foreach (var file in documents)
                             {
                                 <MudItem xs="12" sm="12" md="12" lg="3">
@@ -178,11 +175,6 @@
                             }
                         </MudPaper>
                     </MudItem>
-                    @*<MudItem xs="12" sm="12" md="12" lg="12">
-                    <MudPaper Outlined="true">
-
-                    </MudPaper>
-                    </MudItem>*@
                 </MudGrid>
             </MudForm>
         </MudPaper>
@@ -227,7 +219,7 @@
     private CreateRecipeRequest model = new CreateRecipeRequest();
     private string error;
     private bool showError;
-    private bool loading;
+    private bool loading = true;
     private string strSavedContent = "";
     private ElementReference divIngredientsEditorElement;
     private ElementReference divDirectionsEditorElement;
@@ -287,19 +279,12 @@
                         {
                             await ms.CopyToAsync(ms2);
                             var fileBytes = ms2.ToArray();
-                             documentModel.ImgSrc = "data:image/jpg;base64," + Convert.ToBase64String(fileBytes);
+                            documentModel.ImgSrc = "data:image/jpg;base64," + Convert.ToBase64String(fileBytes);
                         }
                     }
-                    //using (var ms2 = new MemoryStream())
-                    //{
-                    //    await fileContent.CopyToAsync(ms2);
-                    //    var fileBytes = ms2.ToArray();
-                    //    documentModel.ImgSrc = "data:image/jpg;base64," + Convert.ToBase64String(fileBytes);
-                    //}
 
                     documents.Add(documentModel);
                     fileNames.Add(file.Name);
-                    //fileContent.Dispose();
                     upload = true;
                 }
                 catch (Exception ex)
@@ -469,9 +454,12 @@
         if (firstRender)
         {
             loading = true;
-            var recipeModel = await RecipeService.GetRecipe(recipeId);
-            documents = recipeModel.Documents;
-            model = Mapper.Map<CreateRecipeRequest>(recipeModel);
+            if (recipeId > 0)
+            {
+                var recipeModel = await RecipeService.GetRecipe(recipeId);
+                documents = recipeModel.Documents;
+                model = Mapper.Map<CreateRecipeRequest>(recipeModel);
+            }
             categories = await RecipeService.GetCategories();
             if (recipeId <= 0)
             {
@@ -492,6 +480,6 @@
     }
     protected override async Task OnInitializedAsync()
     {
-        recipeId = Int32.Parse(NavigationManager.QueryString("recipeId"));
+        bool result = Int32.TryParse(NavigationManager.QueryString("recipeId"), out recipeId);
     }
 }

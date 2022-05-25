@@ -1,4 +1,5 @@
-﻿@page "/recipes"
+﻿@page "/"
+@page "/recipes"
 @using RecipeLewis.Models
 @attribute [Authorize]
 @inject IRecipeService RecipeService
@@ -10,7 +11,7 @@
     <ToolBarContent>
         <MudText Typo="Typo.h6">Recipes</MudText>
         <MudSpacer />
-        <MudTextField @bind-Value="searchString1" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+        <MudTextField @bind-Value="searchString1" Immediate="true" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
     </ToolBarContent>
     <HeaderContent>
         <MudTh>Title</MudTh>
@@ -54,7 +55,9 @@
     {
         if (string.IsNullOrWhiteSpace(searchString))
             return true;
-        if (element.Title.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+        if (element?.Title?.Contains(searchString, StringComparison.OrdinalIgnoreCase) ?? false)
+            return true;
+        if (element?.Category?.Name?.Contains(searchString, StringComparison.OrdinalIgnoreCase) ?? false)
             return true;
         return false;
     }
