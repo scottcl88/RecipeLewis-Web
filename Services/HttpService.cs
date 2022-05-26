@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Configuration;
+using Newtonsoft.Json;
 using RecipeLewis.Models;
 using System;
 using System.Collections.Generic;
@@ -8,7 +9,7 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Text;
-using System.Text.Json;
+//using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace BlazorApp.Services
@@ -51,7 +52,7 @@ namespace BlazorApp.Services
         public async Task<T> Post<T>(string uri, object value)
         {
             var request = new HttpRequestMessage(HttpMethod.Post, uri);
-            request.Content = new StringContent(JsonSerializer.Serialize(value), Encoding.UTF8, "application/json");
+            request.Content = new StringContent(JsonConvert.SerializeObject(value), Encoding.UTF8, "application/json");
             return await sendRequest<T>(request);
         }
         public async Task<T> PostForm<T>(string uri, MultipartFormDataContent formData)
@@ -65,7 +66,7 @@ namespace BlazorApp.Services
         public async Task<T> Put<T>(string uri, object value)
         {
             var request = new HttpRequestMessage(HttpMethod.Put, uri);
-            request.Content = new StringContent(JsonSerializer.Serialize(value), Encoding.UTF8, "application/json");
+            request.Content = new StringContent(JsonConvert.SerializeObject(value), Encoding.UTF8, "application/json");
             return await sendRequest<T>(request);
         }
         public async Task<T> Delete<T>(string uri)
@@ -100,8 +101,10 @@ namespace BlazorApp.Services
                 var error = await response.Content.ReadFromJsonAsync<Dictionary<string, string>>();
                 throw new Exception(error["message"]);
             }
-
-            return await response.Content.ReadFromJsonAsync<T>();
+            var content = await response.Content.ReadAsStringAsync();
+            var deserializedObject = JsonConvert.DeserializeObject<T>(content);
+            return deserializedObject;
+            //return await response.Content.ReadFromJsonAsync<T>();
         }
     }
 }

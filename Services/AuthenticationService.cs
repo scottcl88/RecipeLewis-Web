@@ -1,5 +1,7 @@
 using Microsoft.AspNetCore.Components;
+using Models.Results;
 using RecipeLewis.Models;
+using RecipeLewis.Models.Requests;
 using System.Threading.Tasks;
 
 namespace BlazorApp.Services
@@ -13,6 +15,7 @@ namespace BlazorApp.Services
         UserModel User { get; }
         Task Initialize();
         Task Login(string email, string password);
+        Task<GenericResult> Register(RegisterRequest request);
         Task Logout();
     }
 
@@ -39,7 +42,6 @@ namespace BlazorApp.Services
 
         public async Task Initialize()
         {
-            Console.WriteLine("AuthService Initialized");
             _authUser.User = await _localStorageService.GetItem<UserModel>("user");
         }
 
@@ -47,12 +49,14 @@ namespace BlazorApp.Services
         {
             _authUser.User = await _httpService.Post<UserModel>("users/authenticate", new { Email = email, Password = password });
             await _localStorageService.SetItem("user", _authUser.User);
-            Console.WriteLine("AuthService user set");
+        }
+        public async Task<GenericResult> Register(RegisterRequest request)
+        {
+            return await _httpService.Post<GenericResult>("users/register", request);
         }
 
         public async Task Logout()
         {
-            Console.WriteLine("AuthService logging out");
             _authUser.User = null;
             await _localStorageService.RemoveItem("user");
             _navigationManager.NavigateTo("login");

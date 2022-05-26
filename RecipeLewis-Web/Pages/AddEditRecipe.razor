@@ -4,7 +4,7 @@
 @using Models.Results
 @using AutoMapper
 @using System.Net.Http.Headers
-@attribute [Authorize]
+@attribute [CustomAuthorizeAttribute(Role.Editor, Role.Admin)]
 @inject IRecipeService RecipeService
 @inject IDocumentService DocumentService
 @inject IAuthenticationService AuthenticationService

@@ -6,12 +6,26 @@
     <MudNavLink Href="/recipes" Match="NavLinkMatch.Prefix">Recipes</MudNavLink>
     <MudNavLink Href="/about" Match="NavLinkMatch.Prefix">About</MudNavLink>
     <MudNavLink Href="/profile" Match="NavLinkMatch.Prefix">Profile</MudNavLink>
-    <MudNavLink @onclick="GoLogout" Match="NavLinkMatch.Prefix">Logout</MudNavLink>
+    <div hidden="@(!loggedIn)">
+        <MudNavLink @onclick="GoLogout" Match="NavLinkMatch.Prefix">Logout</MudNavLink>
+    </div>
+    <div hidden="@(loggedIn)">
+        <MudNavLink Href="/login" Match="NavLinkMatch.Prefix">Login</MudNavLink>
+    </div>
 </MudNavMenu>
 
 @code {
+    private bool loggedIn;
     public void GoLogout()
     {
         AuthenticationService.Logout();
+    }
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            loggedIn = AuthenticationService.User != null;
+            StateHasChanged();
+        }
     }
 }

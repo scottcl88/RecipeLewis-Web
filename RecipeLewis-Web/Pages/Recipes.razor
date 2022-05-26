@@ -1,12 +1,14 @@
 ﻿@page "/"
 @page "/recipes"
 @using RecipeLewis.Models
-@attribute [Authorize]
 @inject IRecipeService RecipeService
+@inject IAuthenticationService AuthenticationService
 
 <PageTitle>Recipes</PageTitle>
 
-<MudButton Href="/recipe/edit" Class="ml-auto mb-2" Variant="Variant.Filled" Color="Color.Primary">Add Recipe</MudButton>
+<div hidden="@(!canEdit)">
+    <MudButton Href="/recipe/edit" Class="ml-auto mb-2" Variant="Variant.Filled" Color="Color.Primary">Add Recipe</MudButton>
+</div>
 
 <MudTable Items="@recipes" Hover="true" Filter="new Func<RecipeModel,bool>(FilterFunc1)" @bind-SelectedItem="selectedItem1" Loading="@loading" LoadingProgressColor="Color.Info">
     <ToolBarContent>
@@ -18,7 +20,9 @@
         <MudTh>Title</MudTh>
         <MudTh>Category</MudTh>
         <MudTh>...</MudTh>
-        <MudTh>...</MudTh>
+        <div hidden="@(!canEdit)">
+            <MudTh>...</MudTh>
+        </div>
     </HeaderContent>
     <RowTemplate>
         <MudTd DataLabel="Nr">@context.Title</MudTd>
@@ -26,9 +30,11 @@
         <MudTd>
             <MudButton Href=@("/recipe/view?recipeId="+context.RecipeId)>View</MudButton>
         </MudTd>
-        <MudTd>
-            <MudButton Href=@("/recipe/edit?recipeId="+context.RecipeId)>Edit</MudButton>
-        </MudTd>
+        <div hidden="@(!canEdit)">
+            <MudTd>
+                <MudButton Href=@("/recipe/edit?recipeId="+context.RecipeId)>Edit</MudButton>
+            </MudTd>
+        </div>
     </RowTemplate>
     <PagerContent>
         <MudTablePager />
@@ -42,6 +48,8 @@
     private RecipeModel selectedItem1;
     private string searchString1 = "";
     private HashSet<RecipeModel> selectedItems = new();
+    private UserModel user;
+    private bool canEdit = false;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -49,6 +57,10 @@
         {
             loading = true;
             recipes = await RecipeService.GetRecipes();
+            user = AuthenticationService.User;
+            canEdit = user?.Role is not null and (Role.Editor or Role.Admin);
+            Console.WriteLine("user Role= " + user?.Role);
+            Console.WriteLine("canEdit = " + canEdit);
             loading = false;
             StateHasChanged();
         }
