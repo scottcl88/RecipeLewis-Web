@@ -7,8 +7,8 @@ using MudBlazor.Services;
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 var env = builder.HostEnvironment;
 
-builder.Configuration
- .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
+//builder.Configuration
+// .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
  //.AddJsonFile($"appsettings.{env}.json", optional: true, reloadOnChange: true);
 
 builder.RootComponents.Add<App>("#app");
@@ -30,8 +30,16 @@ services
     .AddSingleton(new AuthUserSingleton());
 
 services.AddScoped(x => {
-    var apiUrl = new Uri(builder.Configuration["apiUrl"]);
-    return new HttpClient() { BaseAddress = apiUrl };
+    if (env.IsDevelopment())
+    {
+        var apiUrl = new Uri("https://localhost:7039/api/");
+        return new HttpClient() { BaseAddress = apiUrl };
+    }
+    else
+    {
+        var apiUrl = new Uri("https://recipelewis-api.azurewebsites.net/api/");
+        return new HttpClient() { BaseAddress = apiUrl };
+    }
 });
 
 var authenticationService = builder.Build().Services.GetRequiredService<IAuthenticationService>();
