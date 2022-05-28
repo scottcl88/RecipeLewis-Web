@@ -5,6 +5,11 @@ using BlazorApp.Services;
 using MudBlazor.Services;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
+var env = builder.HostEnvironment;
+
+builder.Configuration
+ .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+ .AddJsonFile($"appsettings.{env}.json", optional: true, reloadOnChange: true);
 
 builder.RootComponents.Add<App>("#app");
 builder.RootComponents.Add<HeadOutlet>("head::after");
