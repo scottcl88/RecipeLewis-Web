@@ -59,8 +59,6 @@
             recipes = await RecipeService.GetRecipes();
             user = AuthenticationService.User;
             canEdit = user?.Role is not null and (Role.Editor or Role.Admin);
-            Console.WriteLine("user Role= " + user?.Role);
-            Console.WriteLine("canEdit = " + canEdit);
             loading = false;
             StateHasChanged();
         }

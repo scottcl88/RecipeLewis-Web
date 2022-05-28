@@ -1,0 +1,66 @@
+﻿@page "/verify-email"
+@using System.ComponentModel.DataAnnotations
+@inject IAuthenticationService AuthenticationService
+@inject IUserService UserService
+@inject ILocalStorageService LocalStorageService
+@inject NavigationManager NavigationManager
+@using System.Text.RegularExpressions
+@inherits LayoutComponentBase
+
+<PageTitle>Email Verified</PageTitle>
+
+<MudGrid Justify="Justify.Center">
+    <MudItem lg="6">
+        <MudPaper Class="pa-4">
+            <h3>Verify Email</h3>
+            <br />
+            <div hidden="@(!showMessage)">
+                <MudAlert Severity="@severity">@message</MudAlert>
+            </div>
+            <div hidden="@(showMessage)">
+                <MudText> <MudProgressCircular Size="Size.Small" Color="Color.Default" Indeterminate="true" /> Working...</MudText>
+            </div>
+        </MudPaper>
+    </MudItem>
+</MudGrid>
+
+@code {
+    private bool isValid;
+    private MudForm form;
+    private UserModel model = new UserModel();
+    private bool loading;
+    private string message;
+    private bool showMessage;
+    private Severity severity;
+
+    protected override async Task OnInitializedAsync()
+    {
+        loading = true;
+        try
+        {
+            showMessage = false;
+            string token = NavigationManager.QueryString("token");
+            var request = new VerifyEmailRequest()
+                {
+                    Token = token
+                };
+            var result = await UserService.VerifyEmail(request);
+            if (result.Success)
+            {                
+                await AuthenticationService.ResetLocalUser();
+            }
+            message = result.Message;
+            severity = result.Success ? Severity.Success : Severity.Error;
+            showMessage = true;
+            loading = false;
+        }
+        catch (Exception ex)
+        {
+            message = "An error occurred.";
+            severity = Severity.Error;
+            showMessage = true;
+            loading = false;
+        }
+        StateHasChanged();
+    }
+}

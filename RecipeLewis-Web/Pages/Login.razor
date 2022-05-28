@@ -16,15 +16,20 @@
                     Email: user@example.com<br />
                     Password: string
                 </div>
-                <MudTextField T="string" Label="Email" @bind-value="model.Email" Immediate="true" Required="true" RequiredError="Email is required!" />
-                <MudTextField T="string" Label="Password" @bind-value="model.Password"
-                              InputType="InputType.Password" Required="true" Immediate="true"
+                <MudTextField T="string" Label="Email" @bind-Value="@model.Email" Immediate="true" Required="true" RequiredError="Email is required!" />
+                <MudTextField T="string" Label="Password" @bind-Value="@model.Password"
+                              InputType="InputType.Password" Required="true" Immediate="true" Adornment="Adornment.End" AdornmentIcon="@PasswordInputIcon" OnAdornmentClick="ShowPasswordClick"
                               RequiredError="Password is required!" />
+                <div class="mt-2">
+                    <MudLink Href="/forgot-password" Class="ml-auto" Color="Color.Primary">
+                        <MudText>Forgot password?</MudText>
+                    </MudLink>
+                </div>
                 <div class="d-flex align-center justify-space-between mt-6">
-                    <MudButton Disabled="@(loading || !isValid)" OnClick="HandleSubmit" Class="ml-auto" Variant="Variant.Filled" Color="Color.Primary">
+                    <MudButton Disabled="@(loading || !isValid)" OnClick="HandleSubmit" Variant="Variant.Filled" Color="Color.Primary">
                         @if (loading)
                         {
-                            <MudProgressCircular Class="ms-n1" Size="Size.Small" Indeterminate="true" />
+                            <MudProgressCircular Class="ms-n1 mr-auto" Size="Size.Small" Indeterminate="true" />
                             <MudText Class="ms-2">Working...</MudText>
                         }
                         else
@@ -51,7 +56,24 @@
     private bool loading;
     private string error;
     private bool showError;
-
+    private bool isShow;
+    private InputType PasswordInput = InputType.Password;
+    private string PasswordInputIcon = Icons.Material.Filled.VisibilityOff;
+    private void ShowPasswordClick()
+    {
+        @if (isShow)
+        {
+            isShow = false;
+            PasswordInputIcon = Icons.Material.Filled.VisibilityOff;
+            PasswordInput = InputType.Password;
+        }
+        else
+        {
+            isShow = true;
+            PasswordInputIcon = Icons.Material.Filled.Visibility;
+            PasswordInput = InputType.Text;
+        }
+    }
     protected override async void OnInitialized()
     {
         var user = await LocalStorageService.GetItem<UserModel>("user");
@@ -68,6 +90,7 @@
         {
             showError = false;
             await AuthenticationService.Login(model.Email, model.Password);
+            loading = false;
             var returnUrl = NavigationManager.QueryString("returnUrl") ?? "/";
             NavigationManager.NavigateTo(returnUrl);
         }

@@ -22,9 +22,10 @@
     }
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        if (firstRender)
+        bool newloggedIn = AuthenticationService.User != null;
+        if (firstRender || loggedIn != newloggedIn)
         {
-            loggedIn = AuthenticationService.User != null;
+            loggedIn = newloggedIn;
             StateHasChanged();
         }
     }

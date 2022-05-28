@@ -1,0 +1,74 @@
+﻿@page "/profile"
+@using System.ComponentModel.DataAnnotations
+@inject IAuthenticationService AuthenticationService
+@inject IUserService UserService
+@inject ILocalStorageService LocalStorageService
+@inject NavigationManager NavigationManager
+@using System.Text.RegularExpressions
+@attribute [CustomAuthorizeAttribute(Role.User, Role.Editor, Role.Admin)]
+@inherits LayoutComponentBase
+
+<PageTitle>Profile</PageTitle>
+
+<MudGrid Justify="Justify.Center">
+    <MudItem lg="6">
+        <MudPaper Class="pa-4">
+            <MudForm @ref="form" @bind-IsValid="@isValid">
+                <MudTextField T="string" Label="Email" @bind-Value="@model.Email" ReadOnly="true" Immediate="true" />
+                <MudButton OnClick="HandleSubmit" Class="ml-auto mt-3" Variant="Variant.Filled" Color="Color.Primary" Disabled="@model.RequestedAccess">
+                    <MudText>Request Access To Add/Edit Recipes</MudText>
+                </MudButton>
+            </MudForm>
+        </MudPaper>
+        <div hidden="@(!showMessage)">
+            <MudAlert Severity="@severity">@message</MudAlert>
+        </div>
+    </MudItem>
+</MudGrid>
+
+@code {
+    private bool isValid;
+    private MudForm form;
+    private UserModel model = new UserModel();
+    private bool loading;
+    private string message;
+    private bool showMessage;
+    private Severity severity;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            loading = true;
+            model = AuthenticationService.User;
+            loading = false;
+            StateHasChanged();
+        }
+    }
+
+    private async void HandleSubmit()
+    {
+        loading = true;
+        try
+        {
+            showMessage = false;
+            var result = await UserService.RequestEditAccess();
+            if (result.Success)
+            {                
+                await AuthenticationService.ResetLocalUser();
+            }
+            message = result.Message;
+            severity = result.Success ? Severity.Success : Severity.Error;
+            showMessage = true;
+            loading = false;
+        }
+        catch (Exception ex)
+        {
+            message = "An error occurred.";
+            severity = Severity.Error;
+            showMessage = true;
+            loading = false;
+        }
+        StateHasChanged();
+    }
+}

@@ -15,13 +15,14 @@ namespace BlazorApp.Services
         UserModel User { get; }
         Task Initialize();
         Task Login(string email, string password);
-        Task<GenericResult> Register(RegisterRequest request);
         Task Logout();
+        Task ResetLocalUser();
     }
 
     public class AuthenticationService : IAuthenticationService
     {
         private readonly IHttpService _httpService;
+        private readonly IUserService _userService;
         private readonly NavigationManager _navigationManager;
         private readonly ILocalStorageService _localStorageService;
         private readonly AuthUserSingleton _authUser;
@@ -29,6 +30,7 @@ namespace BlazorApp.Services
 
         public AuthenticationService(
             IHttpService httpService,
+            IUserService userService,
             NavigationManager navigationManager,
             ILocalStorageService localStorageService,
             AuthUserSingleton authUser
@@ -38,6 +40,7 @@ namespace BlazorApp.Services
             _navigationManager = navigationManager;
             _authUser = authUser;
             _localStorageService = localStorageService;
+            _userService = userService;
         }
 
         public async Task Initialize()
@@ -50,11 +53,11 @@ namespace BlazorApp.Services
             _authUser.User = await _httpService.Post<UserModel>("users/authenticate", new { Email = email, Password = password });
             await _localStorageService.SetItem("user", _authUser.User);
         }
-        public async Task<GenericResult> Register(RegisterRequest request)
+        public async Task ResetLocalUser()
         {
-            return await _httpService.Post<GenericResult>("users/register", request);
+            _authUser.User = await _userService.GetUser();
+            await _localStorageService.SetItem("user", _authUser.User);
         }
-
         public async Task Logout()
         {
             _authUser.User = null;

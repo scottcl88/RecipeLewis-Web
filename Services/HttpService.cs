@@ -17,7 +17,7 @@ namespace BlazorApp.Services
     public interface IHttpService
     {
         Task<T> Get<T>(string uri);
-        Task<T> Post<T>(string uri, object value);
+        Task<T> Post<T>(string uri, object? value = null);
         Task<T> PostForm<T>(string uri, MultipartFormDataContent formData);
         Task<T> Put<T>(string uri, object value);
         Task<T> Delete<T>(string uri);
@@ -49,10 +49,13 @@ namespace BlazorApp.Services
             return await sendRequest<T>(request);
         }
 
-        public async Task<T> Post<T>(string uri, object value)
+        public async Task<T> Post<T>(string uri, object? value = null)
         {
             var request = new HttpRequestMessage(HttpMethod.Post, uri);
-            request.Content = new StringContent(JsonConvert.SerializeObject(value), Encoding.UTF8, "application/json");
+            if(value != null)
+            {
+                request.Content = new StringContent(JsonConvert.SerializeObject(value), Encoding.UTF8, "application/json");
+            }
             return await sendRequest<T>(request);
         }
         public async Task<T> PostForm<T>(string uri, MultipartFormDataContent formData)
