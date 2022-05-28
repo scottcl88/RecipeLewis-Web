@@ -21,6 +21,7 @@ namespace BlazorApp.Services
         Task<T> PostForm<T>(string uri, MultipartFormDataContent formData);
         Task<T> Put<T>(string uri, object value);
         Task<T> Delete<T>(string uri);
+        string GetBaseAddress();
     }
 
     public class HttpService : IHttpService
@@ -42,7 +43,10 @@ namespace BlazorApp.Services
             _localStorageService = localStorageService;
             _configuration = configuration;
         }
-
+        public string GetBaseAddress()
+        {
+            return _httpClient.BaseAddress?.AbsoluteUri;
+        }
         public async Task<T> Get<T>(string uri)
         {
             var request = new HttpRequestMessage(HttpMethod.Get, uri);

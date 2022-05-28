@@ -5,6 +5,7 @@
 @using AutoMapper
 @using System.Net.Http.Headers
 @attribute [CustomAuthorizeAttribute(Role.Editor, Role.Admin)]
+@inject IHttpService HttpService
 @inject IRecipeService RecipeService
 @inject IDocumentService DocumentService
 @inject IAuthenticationService AuthenticationService
@@ -168,7 +169,7 @@
                             {
                                 <MudItem xs="12" sm="12" md="12" lg="3">
                                     <MudBadge Icon="@Icons.Material.Filled.Close" Color="Color.Error" Overlap="true" Bordered="true" Class="mx-6 my-4 pointer" OnClick="() => RemoveFileFromBadge(file.DocumentId)">
-                                        <MudImage Src="@(file.NotUploaded ? file.ImgSrc : $"https://localhost:7039/api/documents/view/{recipeId}/{file.DocumentId}")" ObjectFit="ObjectFit.Contain" Fluid="true" Alt="@file.Name" Elevation="25" Class="rounded-lg" />
+                                        <MudImage Src="@(file.NotUploaded ? file.ImgSrc : $"{apiBaseAddress}/documents/view/{recipeId}/{file.DocumentId}")" ObjectFit="ObjectFit.Contain" Fluid="true" Alt="@file.Name" Elevation="25" Class="rounded-lg" />
 
                                     </MudBadge>
                                 </MudItem>
@@ -241,6 +242,7 @@
     private int maxAllowedFiles = 3;
     private bool upload = false;
     private MultipartFormDataContent content = new MultipartFormDataContent();
+    private string apiBaseAddress;
 
     private async Task OnInputFileChanged(InputFileChangeEventArgs e)
     {
@@ -480,6 +482,7 @@
     }
     protected override async Task OnInitializedAsync()
     {
+        apiBaseAddress = HttpService.GetBaseAddress();
         bool result = Int32.TryParse(NavigationManager.QueryString("recipeId"), out recipeId);
     }
 }
