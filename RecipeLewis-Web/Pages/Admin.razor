@@ -1,0 +1,119 @@
+﻿@page "/admin"
+@using RecipeLewis.Models
+@attribute [CustomAuthorizeAttribute(Role.Admin)]
+@inject IRecipeService RecipeService
+@inject IAuthenticationService AuthenticationService
+@inject IUserService UserService
+@inject IDialogService DialogService
+@inject ISnackbar Snackbar
+
+<PageTitle>Admin</PageTitle>
+
+<MudTable Items="@users" Hover="true" Filter="new Func<UserModel,bool>(FilterFunc1)" @bind-SelectedItem="selectedItem1" Loading="@loading" LoadingProgressColor="Color.Info">
+    <ToolBarContent>
+        <MudText Typo="Typo.h6">Admin</MudText>
+        <MudSpacer />
+        <MudTextField @bind-Value="searchString1" Immediate="true" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+    </ToolBarContent>
+    <HeaderContent>
+        <MudTh>UserId</MudTh>
+        <MudTh>Email</MudTh>
+        <MudTh>Role</MudTh>
+        <MudTh>Requested Access</MudTh>
+        <MudTh>...</MudTh>
+        <MudTh>...</MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="Nr">@context.UserId?.Value</MudTd>
+        <MudTd DataLabel="Nr">@context.Email</MudTd>
+        <MudTd DataLabel="Nr">@context.Role</MudTd>
+        <MudTd DataLabel="Nr">@context.RequestedAccess</MudTd>
+        <MudTd>
+            <MudButton OnClick="() => HandlePromote(context)" Disabled="@(context.Role == Role.Admin)">Promote</MudButton>
+        </MudTd>
+        <MudTd>
+            <MudButton OnClick="() => HandleDemote(context)" Disabled="@(context.Role == Role.Unknown)">Demote</MudButton>
+        </MudTd>
+    </RowTemplate>
+    <PagerContent>
+        <MudTablePager />
+    </PagerContent>
+</MudTable>
+
+
+@code {
+    private bool loading = true;
+    private List<UserModel> users = new();
+    private UserModel selectedItem1;
+    private string searchString1 = "";
+    private HashSet<UserModel> selectedItems = new();
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            loading = true;
+            users = await UserService.GetAll();
+            loading = false;
+            StateHasChanged();
+        }
+    }
+    private bool FilterFunc1(UserModel element) => FilterFunc(element, searchString1);
+
+    private bool FilterFunc(UserModel element, string searchString)
+    {
+        if (string.IsNullOrWhiteSpace(searchString))
+            return true;
+        if (element?.Email?.Contains(searchString, StringComparison.OrdinalIgnoreCase) ?? false)
+            return true;
+        return false;
+    }
+    public async Task HandlePromote(UserModel user)
+    {
+        Console.WriteLine("UserModel UserId: " + user.UserId);
+        var currentRole = user.Role;
+        var roleValue = (int)currentRole;
+        var promoteValue = roleValue + 1;
+        var newRole = (Role)(promoteValue);
+        bool? result = await DialogService.ShowMessageBox(
+            "Warning",
+            $"Are you sure you want to promote this user to '{newRole}'?",
+            yesText: "Yes!", cancelText: "Cancel");
+        if (result ?? false)
+        {
+            var promoteResult = await UserService.Promote(user.UserId);
+            if (promoteResult == null)
+            {
+                Snackbar.Add("An error occured!", Severity.Error, config => { config.ShowCloseIcon = true; });
+            }
+            else
+            {
+                Snackbar.Add("Successfully promoted user!", Severity.Success, config => { config.ShowCloseIcon = true; });
+            }
+        }
+    }
+    public async Task HandleDemote(UserModel user)
+    {
+        Console.WriteLine("UserModel UserId 1: " + user.UserId);
+        var currentRole = user.Role;
+        var roleValue = (int)currentRole;
+        var demoteValue = roleValue - 1;
+        var newRole = (Role)(demoteValue);
+        bool? result = await DialogService.ShowMessageBox(
+            "Warning",
+            $"Are you sure you want to demote this user to '{newRole}'?",
+            yesText: "Yes!", cancelText: "Cancel");
+        if (result ?? false)
+        {
+            var demoteResult = await UserService.Demote(user.UserId);
+            if (demoteResult == null)
+            {
+                Snackbar.Add("An error occured!", Severity.Error, config => { config.ShowCloseIcon = true; });
+            }
+            else
+            {
+                Snackbar.Add("Successfully demoted user!", Severity.Success, config => { config.ShowCloseIcon = true; });
+            }
+        }
+    }
+}

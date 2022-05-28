@@ -6,6 +6,10 @@
     <MudNavLink Href="/recipes" Match="NavLinkMatch.Prefix">Recipes</MudNavLink>
     <MudNavLink Href="/about" Match="NavLinkMatch.Prefix">About</MudNavLink>
     <MudNavLink Href="/profile" Match="NavLinkMatch.Prefix">Profile</MudNavLink>
+    @if (userRole == Role.Admin)
+    {
+        <MudNavLink Href="/admin" Match="NavLinkMatch.Prefix">Admin</MudNavLink>
+    }
     <div hidden="@(!loggedIn)">
         <MudNavLink @onclick="GoLogout" Match="NavLinkMatch.Prefix">Logout</MudNavLink>
     </div>
@@ -16,6 +20,7 @@
 
 @code {
     private bool loggedIn;
+    private Role userRole;
     public void GoLogout()
     {
         AuthenticationService.Logout();
@@ -23,9 +28,11 @@
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         bool newloggedIn = AuthenticationService.User != null;
-        if (firstRender || loggedIn != newloggedIn)
+        Role newRole = AuthenticationService.User?.Role ?? Role.Unknown;
+        if (firstRender || loggedIn != newloggedIn || userRole != newRole)
         {
             loggedIn = newloggedIn;
+            userRole = newRole;
             StateHasChanged();
         }
     }

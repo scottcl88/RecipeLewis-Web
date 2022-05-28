@@ -26,19 +26,19 @@
                     </MudLink>
                 </div>
                 <div class="d-flex align-center justify-space-between mt-6">
-                    <MudButton Disabled="@(loading || !isValid)" OnClick="HandleSubmit" Variant="Variant.Filled" Color="Color.Primary">
+                    <MudButton Href="/login" Class="mr-auto" Variant="Variant.Text" Color="Color.Default">
+                        <MudText>Register</MudText>
+                    </MudButton>
+                    <MudButton Disabled="@(loading || !isValid)" OnClick="HandleSubmit" Class="ml-auto" Variant="Variant.Filled" Color="Color.Primary">
                         @if (loading)
                         {
-                            <MudProgressCircular Class="ms-n1 mr-auto" Size="Size.Small" Indeterminate="true" />
+                            <MudProgressCircular Class="ms-n1" Size="Size.Small" Indeterminate="true" />
                             <MudText Class="ms-2">Working...</MudText>
                         }
                         else
                         {
                             <MudText>Login</MudText>
                         }
-                    </MudButton>
-                    <MudButton Href="/register" Class="ml-auto" Variant="Variant.Filled" Color="Color.Primary">
-                        <MudText>Register</MudText>
                     </MudButton>
                 </div>
             </MudForm>

@@ -12,6 +12,7 @@
 @inject IJSRuntime JSRuntime
 @inject IMapper Mapper
 @inject IDialogService DialogService
+@inject IHttpService HttpService
 
 <PageTitle>@model.Title</PageTitle>
 
@@ -77,7 +78,7 @@
                             @foreach (var file in documents)
                             {
                                 <MudItem xs="12" sm="12" md="12" lg="3">
-                                    <MudImage Src="@($"https://localhost:7039/api/documents/view/{recipeId}/{file.DocumentId}")" ObjectFit="ObjectFit.Contain" Fluid="true" Alt="@file.Name" Elevation="25" Class="rounded-lg" />
+                                    <MudImage Src="@($"{apiBaseAddress}documents/view/{recipeId}/{file.DocumentId}")" ObjectFit="ObjectFit.Contain" Fluid="true" Alt="@file.Name" Elevation="25" Class="rounded-lg" />
                                 </MudItem>
                             }
                         </MudPaper>
@@ -115,6 +116,7 @@
     RecipeModel model = new RecipeModel();
     List<DocumentModel> documents = new List<DocumentModel>();
     private int recipeId;
+    private string apiBaseAddress;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -129,6 +131,7 @@
     }
     protected override async Task OnInitializedAsync()
     {
+        apiBaseAddress = HttpService.GetBaseAddress();
         recipeId = Int32.Parse(NavigationManager.QueryString("recipeId"));
     }
     public async Task HandleSave()

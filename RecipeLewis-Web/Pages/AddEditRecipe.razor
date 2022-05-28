@@ -169,7 +169,7 @@
                             {
                                 <MudItem xs="12" sm="12" md="12" lg="3">
                                     <MudBadge Icon="@Icons.Material.Filled.Close" Color="Color.Error" Overlap="true" Bordered="true" Class="mx-6 my-4 pointer" OnClick="() => RemoveFileFromBadge(file.DocumentId)">
-                                        <MudImage Src="@(file.NotUploaded ? file.ImgSrc : $"{apiBaseAddress}/documents/view/{recipeId}/{file.DocumentId}")" ObjectFit="ObjectFit.Contain" Fluid="true" Alt="@file.Name" Elevation="25" Class="rounded-lg" />
+                                        <MudImage Src="@(file.NotUploaded ? file.ImgSrc : $"{apiBaseAddress}documents/view/{recipeId}/{file.DocumentId}")" ObjectFit="ObjectFit.Contain" Fluid="true" Alt="@file.Name" Elevation="25" Class="rounded-lg" />
 
                                     </MudBadge>
                                 </MudItem>
