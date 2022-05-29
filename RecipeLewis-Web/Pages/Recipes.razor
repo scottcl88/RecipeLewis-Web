@@ -18,23 +18,39 @@
     </ToolBarContent>
     <HeaderContent>
         <MudTh>Title</MudTh>
+        <MudTh>Author</MudTh>
         <MudTh>Category</MudTh>
+        <MudTh>Tags</MudTh>
         <MudTh>...</MudTh>
-        <div hidden="@(!canEdit)">
-            <MudTh>...</MudTh>
-        </div>
+        <MudTh>...</MudTh>
     </HeaderContent>
     <RowTemplate>
         <MudTd DataLabel="Nr">@context.Title</MudTd>
+        <MudTd DataLabel="Nr">@context.Author</MudTd>
         <MudTd DataLabel="Nr">@context.Category?.Name</MudTd>
-        <MudTd>
+        <MudTd DataLabel="Nr">
+            <MudChipSet>
+                @foreach (var value in context.Tags)
+                {
+                    <MudChip Text="@value.Name"></MudChip>
+                }
+            </MudChipSet>
+        </MudTd>
+        <MudTd DataLabel="Nr">
             <MudButton Href=@("/recipe/view?recipeId="+context.RecipeId)>View</MudButton>
         </MudTd>
-        <div hidden="@(!canEdit)">
-            <MudTd>
-                <MudButton Href=@("/recipe/edit?recipeId="+context.RecipeId)>Edit</MudButton>
-            </MudTd>
-        </div>
+        <MudTd DataLabel="Nr">
+            @if (canEdit)
+            {
+                <MudButton Href=@("/recipe/edit?recipeId="+context.RecipeId) Disabled="@(!canEdit)">Edit</MudButton>
+            }
+            else
+            {
+                <MudTooltip Text="Go to your Profile to request access to edit" Color="Color.Primary" Placement="Placement.Top">
+                    <MudButton Href=@("/recipe/edit?recipeId="+context.RecipeId) Disabled="@(!canEdit)">Edit</MudButton>
+                </MudTooltip>
+            }
+        </MudTd>
     </RowTemplate>
     <PagerContent>
         <MudTablePager />
@@ -71,7 +87,11 @@
             return true;
         if (element?.Title?.Contains(searchString, StringComparison.OrdinalIgnoreCase) ?? false)
             return true;
+        if (element?.Author?.Contains(searchString, StringComparison.OrdinalIgnoreCase) ?? false)
+            return true;
         if (element?.Category?.Name?.Contains(searchString, StringComparison.OrdinalIgnoreCase) ?? false)
+            return true;
+        if (element?.Tags.Any(x => x.Name.Contains(searchString, StringComparison.OrdinalIgnoreCase)) ?? false)
             return true;
         return false;
     }
