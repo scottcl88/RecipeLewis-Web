@@ -25,21 +25,23 @@
             <MudForm @ref="form" hidden="@(loading)">
                 <MudGrid>
                     <MudItem xs="12" sm="12" md="6" lg="6">
-                        <MudTextField T="string" Label="Title" ReadOnly="true" @bind-Value="@model.Title" />
+                        <h1>@((MarkupString)model.Title)</h1>
                     </MudItem>
                     <MudItem xs="12" sm="12" md="6" lg="6">
-                        <MudTextField T="string" Label="Author" ReadOnly="true" @bind-Value="@model.Author" />
-                    </MudItem>
-                    <MudItem xs="12" sm="12" md="6" lg="6">
-                        <MudInputLabel>Category</MudInputLabel>
-                        <MudText>@model.Category?.Name</MudText>
-                    </MudItem>
-                    <MudItem xs="12" sm="12" md="6" lg="6">
-                        <MudTextField T="string" Label="Yield" ReadOnly="true" @bind-Value="@model.Yield" />
-                    </MudItem>
-                    <MudItem xs="12" sm="12" md="12" lg="12">
-                        <label class="mud-input-label">Tags</label>
-                        <MudChipSet>
+                        <MudInputLabel Class="bold">Author</MudInputLabel>
+                        <MudText>@((MarkupString)model.Author)</MudText>
+                        </MudItem>
+                        <MudItem xs="12" sm="12" md="6" lg="6">
+                            <MudInputLabel Class="bold">Category</MudInputLabel>
+                            <MudText>@model.Category?.Name</MudText>
+                        </MudItem>
+                        <MudItem xs="12" sm="12" md="6" lg="6">
+                            <MudInputLabel Class="bold">Yield</MudInputLabel>
+                            <MudText>@((MarkupString)model.Yield)</MudText>
+                        </MudItem>
+                        <MudItem xs="12" sm="12" md="12" lg="12">
+                            <MudInputLabel Class="bold">Tags</MudInputLabel>
+                            <MudChipSet>
                             @foreach (var value in model.Tags)
                             {
                                 <MudChip Text="@value.Name"></MudChip>
@@ -47,38 +49,52 @@
                         </MudChipSet>
                     </MudItem>
                     <MudItem xs="12" sm="12" md="12" lg="12">
-                        <MudTextField T="string" Label="Description" ReadOnly="true" @bind-Value="@model.Description" Lines="3" />
-                        <MudTextField T="string" Label="Storage" ReadOnly="true" @bind-Value="@model.Storage" Lines="3" />
-                        <MudTextField T="string" Label="Nutrition" ReadOnly="true" @bind-Value="@model.Nutrition" />
-                    </MudItem>
-                    <MudItem xs="12" sm="12" md="4" lg="4">
-                        <MudTimePicker Label="Prep Time" ReadOnly="true" @bind-Time="@model.PrepTime" />
-                    </MudItem>
-                    <MudItem xs="12" sm="12" md="4" lg="4">
-                        <MudTimePicker Label="Cook Time" ReadOnly="true" @bind-Time="@model.CookTime" />
-                    </MudItem>
-                    <MudItem xs="12" sm="12" md="4" lg="4">
-                        <MudTimePicker Label="Total Time" ReadOnly="true" @bind-Time="@model.TotalTime" />
-                    </MudItem>
-                    <MudItem xs="12" sm="12" md="12" lg="12" class="ma-auto">
-                        <label class="mud-input-label">Ingredients</label>
-                        <div id="ingredients">
-                            <MudText>@((MarkupString)model.IngredientsHTML)</MudText>
-                        </div>
-
-                    </MudItem>
-                    <MudItem xs="12" sm="12" md="12" lg="12" class="ma-auto">
-                        <label class="mud-input-label">Directions</label>
-                        <div id="directions">
-                            <MudText>@((MarkupString)model.DirectionsHTML)</MudText>
-                        </div>
-                    </MudItem>
+                            <MudInputLabel Class="bold">Description</MudInputLabel>
+                            <MudText>@((MarkupString)model.Description)</MudText>
+                        </MudItem>
                     <MudItem xs="12" sm="12" md="12" lg="12">
-                        <MudPaper Outlined="true">
+                            <MudInputLabel Class="bold">Storage</MudInputLabel>
+                            <MudText>@((MarkupString)model.Storage)</MudText>
+                        </MudItem>
+                    <MudItem xs="12" sm="12" md="12" lg="12">
+                            <MudInputLabel Class="bold">Nutrition</MudInputLabel>
+                            <MudText>@((MarkupString)model.Nutrition)</MudText>
+                        </MudItem>
+                        <MudItem xs="12" sm="12" md="4" lg="4">
+                            <MudInputLabel Class="bold">Prep Time</MudInputLabel>
+                            <MudText>@((MarkupString)model.PrepTime.ToString())</MudText>
+                        </MudItem>
+                        <MudItem xs="12" sm="12" md="4" lg="4">
+                            <MudInputLabel Class="bold">Cook Time</MudInputLabel>
+                            <MudText>@((MarkupString)model.CookTime.ToString())</MudText>
+                        </MudItem>
+                        <MudItem xs="12" sm="12" md="4" lg="4">
+                            <MudInputLabel Class="bold">Total Time</MudInputLabel>
+                            <MudText>@((MarkupString)model.TotalTime.ToString())</MudText>
+                        </MudItem>
+                        <MudItem xs="12" sm="12" md="12" lg="12" class="ma-auto">
+                            <MudInputLabel Class="bold">Ingredients</MudInputLabel>
+                            <div id="ingredients">
+                                <MudText>@((MarkupString)model.IngredientsHTML)</MudText>
+                            </div>
+                        </MudItem>
+                        <MudItem xs="12" sm="12" md="12" lg="12" class="ma-auto">
+                            <MudInputLabel Class="bold">Directions</MudInputLabel>
+                            <div id="directions">
+                                <MudText>@((MarkupString)model.DirectionsHTML)</MudText>
+                            </div>
+                        </MudItem>
+                        <MudItem xs="12" sm="12" md="12" lg="12" Class="d-print-none">
+                            <MudPaper Outlined="true">
                             @foreach (var file in documents)
                             {
                                 <MudItem xs="12" sm="12" md="12" lg="3">
-                                    <MudImage Src="@($"{apiBaseAddress}documents/view/{recipeId}/{file.DocumentId}")" ObjectFit="ObjectFit.Contain" Fluid="true" Alt="@file.Name" Elevation="25" Class="rounded-lg" />
+                                    <a href="@($"{apiBaseAddress}documents/view/{recipeId}/{file.DocumentId}")" target="_blank" title="Recipe Image">
+                                        <MudImage Src="@($"{apiBaseAddress}documents/view/{recipeId}/{file.DocumentId}")" ObjectFit="ObjectFit.Contain" Fluid="true" Alt="@file.Name" Elevation="25" Class="rounded-lg" />
+                                    </a>
+                                    <a href="@($"{apiBaseAddress}documents/download/{recipeId}/{file.DocumentId}")" target="_blank" title="Recipe Image">
+                                        <MudIcon Icon="@Icons.Filled.Download"></MudIcon>
+                                    </a>
                                 </MudItem>
                             }
                         </MudPaper>
@@ -87,11 +103,11 @@
             </MudForm>
         </MudPaper>
     </MudItem>
-    <MudItem xs="12" sm="12" md="2" lg="2">
+    <MudItem xs="12" sm="12" md="2" lg="2" Class="d-print-none">
         <MudPaper Class="pa-4 position-fixed-lg" Style="">
             <MudGrid Justify="Justify.Center">
                 <MudItem xs="12" sm="12" md="12" lg="12">
-                    <MudButton Disabled="@(loading)" OnClick="HandleSave" Variant="Variant.Filled" Color="Color.Primary">
+                    <MudButton Disabled="@(loading)" OnClick="HandlePrint" Variant="Variant.Filled" Color="Color.Primary">
                         @if (loading)
                         {
                             <MudProgressCircular Class="ms-n1" Size="Size.Small" Indeterminate="true" />
@@ -107,9 +123,13 @@
         </MudPaper>
     </MudItem>
 </MudGrid>
-
+<style>
+    .bold {
+        font-weight: bold !important;
+    }
+</style>
 @code {
-    private MudForm form;
+    private MudForm? form;
     private string error;
     private bool showError;
     private bool loading = true;
@@ -134,7 +154,7 @@
         apiBaseAddress = HttpService.GetBaseAddress();
         recipeId = Int32.Parse(NavigationManager.QueryString("recipeId"));
     }
-    public async Task HandleSave()
+    public async Task HandlePrint()
     {
         await JSRuntime.InvokeVoidAsync("print");
     }

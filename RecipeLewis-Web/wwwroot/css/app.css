@@ -38,6 +38,10 @@ a, .btn-link {
     cursor: pointer !important;
 }
 
+.bold {
+    font-weight: bold !important;
+}
+
 @media screen and (min-width: 1280px) {
     .position-fixed-lg {
         position: fixed;
