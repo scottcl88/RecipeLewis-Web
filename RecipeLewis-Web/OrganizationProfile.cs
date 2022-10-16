@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
-using RecipeLewis.Models;
-using RecipeLewis.Models.Requests;
 
+namespace RecipeLewis.Business;
 public class OrganizationProfile : Profile
 {
     public OrganizationProfile()

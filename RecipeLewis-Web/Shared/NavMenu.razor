@@ -1,6 +1,9 @@
 ﻿@using System.ComponentModel.DataAnnotations
 @inject IAuthenticationService AuthenticationService
 @inject NavigationManager NavigationManager
+@inject IDialogService DialogService
+@inject ISnackbar Snackbar
+@inject MenuService MenuService
 
 <MudNavMenu>
     <MudNavLink Href="/recipes" Match="NavLinkMatch.Prefix">Recipes</MudNavLink>
@@ -11,7 +14,7 @@
         <MudNavLink Href="/admin" Match="NavLinkMatch.Prefix">Admin</MudNavLink>
     }
     <div hidden="@(!loggedIn)">
-        <MudNavLink @onclick="GoLogout" Match="NavLinkMatch.Prefix">Logout</MudNavLink>
+        <MudNavLink @onclick="HandleLogout" Match="NavLinkMatch.Prefix">Logout</MudNavLink>
     </div>
     <div hidden="@(loggedIn)">
         <MudNavLink Href="/login" Match="NavLinkMatch.Prefix">Login</MudNavLink>
@@ -21,9 +24,22 @@
 @code {
     private bool loggedIn;
     private Role userRole;
-    public void GoLogout()
+    public async Task HandleLogout()
     {
-        AuthenticationService.Logout();
+        var dialog = DialogService.Show<LogoutDialog>("Logout");
+        var result = await dialog.Result;
+
+        if (!result.Cancelled)
+        {
+            await DoLogout();
+        }
+    }
+    protected override void OnInitialized()
+    {
+        // if the OnChange event is raised, refresh this view
+        MenuService.OnChange += () => StateHasChanged();
+
+        base.OnInitialized();
     }
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -33,6 +49,21 @@
         {
             loggedIn = newloggedIn;
             userRole = newRole;
+            StateHasChanged();
+        }
+    }
+    private async Task DoLogout()
+    {
+        try
+        {
+            Snackbar.Add("Logged out!", Severity.Success, config => { config.ShowCloseIcon = true; });
+            await AuthenticationService.Logout();
+            MenuService.SetIsAuthenticated(true);
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add("An error occured!", Severity.Error, config => { config.ShowCloseIcon = true; });
+            Console.WriteLine("Error: {0}", ex.Message);
             StateHasChanged();
         }
     }

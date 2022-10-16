@@ -5,6 +5,7 @@
 @inject NavigationManager NavigationManager
 @using System.Text.RegularExpressions
 @inherits LayoutComponentBase
+@inject MenuService MenuService
 
 <PageTitle>Login</PageTitle>
 
@@ -16,10 +17,9 @@
                     Email: user@example.com<br />
                     Password: string
                 </div>
-                <MudTextField T="string" Label="Email" @bind-Value="@model.Email" Immediate="true" Required="true" RequiredError="Email is required!" />
-                <MudTextField T="string" Label="Password" @bind-Value="@model.Password"
-                              InputType="InputType.Password" Required="true" Immediate="true" Adornment="Adornment.End" AdornmentIcon="@PasswordInputIcon" OnAdornmentClick="ShowPasswordClick"
-                              RequiredError="Password is required!" />
+                <MudTextField T="string" Label="Email" @bind-Value="@model.Email" Immediate="true" Required="true" RequiredError="Email is required!" InputType="InputType.Email" InputMode="InputMode.email" />
+                <MudTextField T="string" Label="Password" @bind-Value="@model.Password" Required="true" Immediate="true" InputType="InputType.Password"
+                Adornment="Adornment.End" AdornmentIcon="@PasswordInputIcon" OnAdornmentClick="ShowPasswordClick" RequiredError="Password is required!" />
                 <div class="mt-2">
                     <MudLink Href="/forgot-password" Class="ml-auto" Color="Color.Primary">
                         <MudText>Forgot password?</MudText>
@@ -44,7 +44,7 @@
             </MudForm>
         </MudPaper>
         <div hidden="@(!showError)">
-            <MudAlert Severity="Severity.Error">An error occurred.</MudAlert>
+            <MudAlert Severity="Severity.Error">@error</MudAlert>
         </div>
     </MudItem>
 </MudGrid>
@@ -91,6 +91,7 @@
             showError = false;
             await AuthenticationService.Login(model.Email, model.Password);
             loading = false;
+            MenuService.SetIsAuthenticated(true);
             var returnUrl = NavigationManager.QueryString("returnUrl") ?? "/";
             NavigationManager.NavigateTo(returnUrl);
         }

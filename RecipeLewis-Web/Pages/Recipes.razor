@@ -10,7 +10,7 @@
     <MudButton Href="/recipe/edit" Class="ml-auto mb-2" Variant="Variant.Filled" Color="Color.Primary">Add Recipe</MudButton>
 </div>
 
-<MudTable Items="@recipes" Hover="true" Filter="new Func<RecipeModel,bool>(FilterFunc1)" @bind-SelectedItem="selectedItem1" Loading="@loading" LoadingProgressColor="Color.Info">
+<MudTable Items="@recipes" Hover="true" Striped="true" Filter="new Func<RecipeModel,bool>(FilterFunc1)" @bind-SelectedItem="selectedItem1" Loading="@loading" LoadingProgressColor="Color.Info">
     <ToolBarContent>
         <MudText Typo="Typo.h6">Recipes</MudText>
         <MudSpacer />
@@ -25,10 +25,10 @@
         <MudTh>...</MudTh>
     </HeaderContent>
     <RowTemplate>
-        <MudTd DataLabel="Nr">@context.Title</MudTd>
-        <MudTd DataLabel="Nr">@context.Author</MudTd>
-        <MudTd DataLabel="Nr">@context.Category?.Name</MudTd>
-        <MudTd DataLabel="Nr">
+        <MudTd DataLabel="Title">@context.Title</MudTd>
+        <MudTd DataLabel="Author">@context.Author</MudTd>
+        <MudTd DataLabel="Category">@context.Category?.Name</MudTd>
+        <MudTd DataLabel="Tags">
             <MudChipSet>
                 @foreach (var value in context.Tags)
                 {
@@ -36,10 +36,10 @@
                 }
             </MudChipSet>
         </MudTd>
-        <MudTd DataLabel="Nr">
+        <MudTd DataLabel="...">
             <MudButton Href=@("/recipe/view?recipeId="+context.RecipeId)>View</MudButton>
         </MudTd>
-        <MudTd DataLabel="Nr">
+        <MudTd DataLabel="...">
             @if (canEdit)
             {
                 <MudButton Href=@("/recipe/edit?recipeId="+context.RecipeId) Disabled="@(!canEdit)">Edit</MudButton>

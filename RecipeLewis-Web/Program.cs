@@ -21,6 +21,7 @@ services.AddMudServices();
 services.AddAutoMapper(typeof(OrganizationProfile));
 
 services
+    .AddScoped<MenuService>()
     .AddScoped<IAuthenticationService, AuthenticationService>()
     .AddScoped<IUserService, UserService>()
     .AddScoped<IRecipeService, RecipeService>()
