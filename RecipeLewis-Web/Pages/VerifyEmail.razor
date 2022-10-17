@@ -20,6 +20,9 @@
             <div hidden="@(showMessage)">
                 <MudText> <MudProgressCircular Size="Size.Small" Color="Color.Default" Indeterminate="true" /> Working...</MudText>
             </div>
+            <MudButton Href="/login" Class="mr-auto mt-3" Variant="Variant.Filled" Color="Color.Primary">
+                <MudText>Login</MudText>
+            </MudButton>
         </MudPaper>
     </MudItem>
 </MudGrid>
@@ -47,7 +50,7 @@
             var result = await UserService.VerifyEmail(request);
             if (result.Success)
             {                
-                await AuthenticationService.ResetLocalUser();
+               // await AuthenticationService.ResetLocalUser();
             }
             message = result.Message;
             severity = result.Success ? Severity.Success : Severity.Error;
