@@ -43,7 +43,7 @@
                         <MudTextField T="string" Label="Yield" @bind-Value="@model.Yield" />
                     </MudItem>
                     <MudItem xs="12" sm="12" md="12" lg="12">
-                        <label class="mud-input-label">Tags</label>
+                        <MudInputLabel Class="bold">Tags</MudInputLabel>
                         <MudChipSet AllClosable="true" OnClose="RemoveTag">
                             @foreach (var value in model.Tags)
                             {
@@ -61,13 +61,37 @@
                         <MudTextField T="string" Label="Nutrition" @bind-Value="@model.Nutrition" />
                     </MudItem>
                     <MudItem xs="12" sm="12" md="4" lg="4">
-                        <MudTimePicker Label="Prep Time" @bind-Time="@model.PrepTime" />
+                        <MudInputLabel Class="bold">Prep Time</MudInputLabel>
+                        <MudGrid>
+                            <MudItem xs="6" sm="6" md="6" lg="4">
+                                <MudNumericField @bind-Value="@prepTimeHours" Label="Hours" Variant="Variant.Text" Min="0" Max="99" />
+                            </MudItem>
+                            <MudItem xs="6" sm="6" md="6" lg="4">
+                                <MudNumericField @bind-Value="@prepTimeMinutes" Label="Minutes" Variant="Variant.Text" Min="0" Max="59" />
+                            </MudItem>
+                        </MudGrid>
                     </MudItem>
                     <MudItem xs="12" sm="12" md="4" lg="4">
-                        <MudTimePicker Label="Cook Time" @bind-Time="@model.CookTime" />
+                        <MudInputLabel Class="bold">Cook Time</MudInputLabel>
+                        <MudGrid>
+                            <MudItem xs="6" sm="6" md="6" lg="4">
+                                <MudNumericField @bind-Value="@cookTimeHours" Label="Hours" Variant="Variant.Text" Min="0" Max="99" />
+                            </MudItem>
+                            <MudItem xs="6" sm="6" md="6" lg="4">
+                                <MudNumericField @bind-Value="@cookTimeMinutes" Label="Minutes" Variant="Variant.Text" Min="0" Max="59" />
+                            </MudItem>
+                        </MudGrid>
                     </MudItem>
                     <MudItem xs="12" sm="12" md="4" lg="4">
-                        <MudTimePicker Label="Total Time" @bind-Time="@model.TotalTime" />
+                        <MudInputLabel Class="bold">Total Time</MudInputLabel>
+                        <MudGrid>
+                            <MudItem xs="6" sm="6" md="6" lg="4">
+                                <MudNumericField @bind-Value="@totalTimeHours" Label="Hours" Variant="Variant.Text" Min="0" Max="99" />
+                            </MudItem>
+                            <MudItem xs="6" sm="6" md="6" lg="4">
+                                <MudNumericField @bind-Value="@totalTimeMinutes" Label="Minutes" Variant="Variant.Text" Min="0" Max="59" />
+                            </MudItem>
+                        </MudGrid>
                     </MudItem>
                     <MudItem xs="12" sm="12" md="12" lg="12" class="ma-auto">
                         <label class="mud-input-label">Ingredients</label>
@@ -244,6 +268,13 @@
     private MultipartFormDataContent content = new MultipartFormDataContent();
     private string apiBaseAddress;
 
+    private int prepTimeHours;
+    private int prepTimeMinutes;
+    private int cookTimeHours;
+    private int cookTimeMinutes;
+    private int totalTimeHours;
+    private int totalTimeMinutes;
+
     private async Task OnInputFileChanged(InputFileChangeEventArgs e)
     {
         if (loading || clearing) return;
@@ -358,6 +389,10 @@
         loading = true;
         try
         {
+            model.PrepTime = new TimeSpan(prepTimeHours, prepTimeMinutes, 0);
+            model.CookTime = new TimeSpan(cookTimeHours, cookTimeMinutes, 0);
+            model.TotalTime = new TimeSpan(totalTimeHours, totalTimeMinutes, 0);
+
             model.IngredientsHTML = await JSRuntime.InvokeAsync<string>(
             "QuillFunctions.getQuillHTML", divIngredientsEditorElement);
             model.DirectionsHTML = await JSRuntime.InvokeAsync<string>(
@@ -401,7 +436,14 @@
             }
             else
             {
-                Snackbar.Add("Successfully added recipe!", Severity.Success, config => { config.ShowCloseIcon = true; });
+                if (recipeId <= 0)
+                {
+                    Snackbar.Add("Successfully added recipe!", Severity.Success, config => { config.ShowCloseIcon = true; });
+                }
+                else
+                {
+                    Snackbar.Add("Successfully saved recipe!", Severity.Success, config => { config.ShowCloseIcon = true; });
+                }
                 NavigationManager.NavigateTo("/recipes");
             }
         }
@@ -467,6 +509,23 @@
             {
                 model.Category = categories?.FirstOrDefault();
             }
+
+            if (model.PrepTime.HasValue)
+            {
+                prepTimeHours = model.PrepTime.Value.Hours;
+                prepTimeMinutes = model.PrepTime.Value.Minutes;
+            }
+            if (model.CookTime.HasValue)
+            {
+                cookTimeHours = model.CookTime.Value.Hours;
+                cookTimeMinutes = model.CookTime.Value.Minutes;
+            }
+            if (model.TotalTime.HasValue)
+            {
+                totalTimeHours = model.TotalTime.Value.Hours;
+                totalTimeMinutes = model.TotalTime.Value.Minutes;
+            }
+
             await JSRuntime.InvokeAsync<string>(
                 "QuillFunctions.createQuill", divIngredientsEditorElement, "#ingredientsToolbar", "Ingredients");
             await JSRuntime.InvokeAsync<string>(

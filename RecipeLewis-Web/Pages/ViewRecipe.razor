@@ -25,23 +25,23 @@
             <MudForm @ref="form" hidden="@(loading)">
                 <MudGrid>
                     <MudItem xs="12" sm="12" md="6" lg="6">
-                        <h1>@((MarkupString)model.Title)</h1>
+                        <h1>@model.Title</h1>
                     </MudItem>
                     <MudItem xs="12" sm="12" md="6" lg="6">
                         <MudInputLabel Class="bold">Author</MudInputLabel>
-                        <MudText>@((MarkupString)model.Author)</MudText>
-                        </MudItem>
-                        <MudItem xs="12" sm="12" md="6" lg="6">
-                            <MudInputLabel Class="bold">Category</MudInputLabel>
-                            <MudText>@model.Category?.Name</MudText>
-                        </MudItem>
-                        <MudItem xs="12" sm="12" md="6" lg="6">
-                            <MudInputLabel Class="bold">Yield</MudInputLabel>
-                            <MudText>@((MarkupString)model.Yield)</MudText>
-                        </MudItem>
-                        <MudItem xs="12" sm="12" md="12" lg="12">
-                            <MudInputLabel Class="bold">Tags</MudInputLabel>
-                            <MudChipSet>
+                        <MudText>@model.Author</MudText>
+                    </MudItem>
+                    <MudItem xs="12" sm="12" md="6" lg="6">
+                        <MudInputLabel Class="bold">Category</MudInputLabel>
+                        <MudText>@model.Category?.Name</MudText>
+                    </MudItem>
+                    <MudItem xs="12" sm="12" md="6" lg="6">
+                        <MudInputLabel Class="bold">Yield</MudInputLabel>
+                        <MudText>@model.Yield</MudText>
+                    </MudItem>
+                    <MudItem xs="12" sm="12" md="12" lg="12">
+                        <MudInputLabel Class="bold">Tags</MudInputLabel>
+                        <MudChipSet>
                             @foreach (var value in model.Tags)
                             {
                                 <MudChip Text="@value.Name"></MudChip>
@@ -49,33 +49,41 @@
                         </MudChipSet>
                     </MudItem>
                     <MudItem xs="12" sm="12" md="12" lg="12">
-                            <MudInputLabel Class="bold">Description</MudInputLabel>
-                            <MudText>@((MarkupString)model.Description)</MudText>
-                        </MudItem>
+                        <MudInputLabel Class="bold">Description</MudInputLabel>
+                        <MudText>@model.Description</MudText>
+                    </MudItem>
                     <MudItem xs="12" sm="12" md="12" lg="12">
-                            <MudInputLabel Class="bold">Storage</MudInputLabel>
-                            <MudText>@((MarkupString)model.Storage)</MudText>
-                        </MudItem>
+                        <MudInputLabel Class="bold">Storage</MudInputLabel>
+                        <MudText>@model.Storage</MudText>
+                    </MudItem>
                     <MudItem xs="12" sm="12" md="12" lg="12">
-                            <MudInputLabel Class="bold">Nutrition</MudInputLabel>
-                            <MudText>@((MarkupString)model.Nutrition)</MudText>
-                        </MudItem>
-                        <MudItem xs="12" sm="12" md="4" lg="4">
-                            <MudInputLabel Class="bold">Prep Time</MudInputLabel>
-                            <MudText>@((MarkupString)model.PrepTime.ToString())</MudText>
-                        </MudItem>
-                        <MudItem xs="12" sm="12" md="4" lg="4">
-                            <MudInputLabel Class="bold">Cook Time</MudInputLabel>
-                            <MudText>@((MarkupString)model.CookTime.ToString())</MudText>
-                        </MudItem>
-                        <MudItem xs="12" sm="12" md="4" lg="4">
-                            <MudInputLabel Class="bold">Total Time</MudInputLabel>
-                            <MudText>@((MarkupString)model.TotalTime.ToString())</MudText>
-                        </MudItem>
-                        <MudItem xs="12" sm="12" md="12" lg="12" class="ma-auto">
-                            <MudInputLabel Class="bold">Ingredients</MudInputLabel>
-                            <div id="ingredients">
-                                <MudText>@((MarkupString)model.IngredientsHTML)</MudText>
+                        <MudInputLabel Class="bold">Nutrition</MudInputLabel>
+                        <MudText>@model.Nutrition</MudText>
+                    </MudItem>
+                    <MudItem xs="4" sm="4" md="4" lg="4">
+                        <MudInputLabel Class="bold">Prep Time</MudInputLabel>
+                        @if(model.PrepTime.HasValue){
+                            <MudText>@model.PrepTime.Value.ToString("h' hr. 'm' min.'")</MudText>
+                        }
+                    </MudItem>
+                    <MudItem xs="4" sm="4" md="4" lg="4">
+                        <MudInputLabel Class="bold">Cook Time</MudInputLabel>
+                        @if (model.CookTime.HasValue)
+                        {
+                            <MudText>@model.CookTime.Value.ToString("h' hr. 'm' min.'")</MudText>
+                        }
+                    </MudItem>
+                    <MudItem xs="4" sm="4" md="4" lg="4">
+                        <MudInputLabel Class="bold">Total Time</MudInputLabel>
+                        @if (model.TotalTime.HasValue)
+                        {
+                            <MudText>@model.TotalTime.Value.ToString("h' hr. 'm' min.'")</MudText>
+                        }
+                    </MudItem>
+                    <MudItem xs="12" sm="12" md="12" lg="12" class="ma-auto">
+                        <MudInputLabel Class="bold">Ingredients</MudInputLabel>
+                        <div id="ingredients">
+                            <MudText>@((MarkupString)model.IngredientsHTML)</MudText>
                             </div>
                         </MudItem>
                         <MudItem xs="12" sm="12" md="12" lg="12" class="ma-auto">
@@ -83,6 +91,14 @@
                             <div id="directions">
                                 <MudText>@((MarkupString)model.DirectionsHTML)</MudText>
                             </div>
+                        </MudItem>
+                        <MudItem xs="6" sm="6" md="6" lg="6">
+                                <MudInputLabel Class="bold">Recipe Record Created By</MudInputLabel>
+                                <MudText>@model.CreatedBy?.Name</MudText>
+                        </MudItem>
+                        <MudItem xs="6" sm="6" md="6" lg="6">
+                            <MudInputLabel Class="bold">Recipe Record Last Modified By</MudInputLabel>
+                                <MudText>@model.ModifiedBy?.Name</MudText>
                         </MudItem>
                         <MudItem xs="12" sm="12" md="12" lg="12" Class="d-print-none">
                             <MudPaper Outlined="true">

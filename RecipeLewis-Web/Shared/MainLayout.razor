@@ -12,7 +12,7 @@
     <MudDrawer @bind-Open="_drawerOpen" ClipMode="DrawerClipMode.Always" Elevation="2" Class="d-print-none">
         <NavMenu />
     </MudDrawer>
-    <MudMainContent>
+    <MudMainContent Class="">
         <MudContainer class="mt-4">
             @Body
         </MudContainer>
@@ -26,3 +26,10 @@
         _drawerOpen = !_drawerOpen;
     }
 }
+<style>
+      @@media print {
+        .mud-main-content{
+            padding-top: 0 !important;
+        }
+      }
+</style>
