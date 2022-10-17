@@ -10,7 +10,8 @@ public interface IUserService
 {
     Task<UserModel> GetUser();
     Task<List<UserModel>> GetAll();
-    Task<GenericResult> RequestEditAccess();
+    Task<GenericResult> RequestEditAccess(); 
+    Task<GenericResult> Update(UpdateUserRequest request);
     Task<GenericResult> VerifyEmail(VerifyEmailRequest request);
     Task<GenericResult> ForgotPassword(ForgotPasswordRequest request);
     Task<GenericResult> ResetPassword(ResetPasswordRequest request);
@@ -40,6 +41,10 @@ public class UserService : IUserService
     public async Task<GenericResult> RequestEditAccess()
     {
         return await _httpService.Post<GenericResult>("users/request-edit-access");
+    }
+    public async Task<GenericResult> Update(UpdateUserRequest request)
+    {
+        return await _httpService.Post<GenericResult>($"users/update", request);
     }
     public async Task<GenericResult> VerifyEmail(VerifyEmailRequest request)
     {

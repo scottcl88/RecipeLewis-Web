@@ -14,24 +14,39 @@
     <MudItem lg="6">
         <MudPaper Class="pa-4">
             <MudForm @ref="form" @bind-IsValid="@isValid">
-                <MudTextField T="string" Label="Email" @bind-Value="@model.Email" ReadOnly="true" Immediate="true" />
+                <MudTextField T="string" Label="Name" @bind-Value="@model.Name" Required="true" Immediate="true" />
+                <MudItem xs="12" sm="12" md="12" lg="12" Class="mt-3">
+                    <MudInputLabel Class="bold">Email</MudInputLabel>
+                    <MudText>@model.Email</MudText>
+                </MudItem>
                 @if (model.Role != Role.Editor && model.Role != Role.Admin)
                 {
                     if (model.RequestedAccess)
                     {
                         <MudTooltip Text="You have already requested access" Color="Color.Primary" Placement="Placement.Top">
-                            <MudButton OnClick="HandleSubmit" Class="ml-auto mt-3" Variant="Variant.Filled" Color="Color.Primary" Disabled="@model.RequestedAccess">
+                            <MudButton OnClick="HandleRequestEditAccess" Class="ml-auto mt-3" Variant="Variant.Filled" Color="Color.Primary" Disabled="@model.RequestedAccess">
                                 <MudText>Request Access To Add/Edit Recipes</MudText>
                             </MudButton>
                         </MudTooltip>
                     }
                     else
                     {
-                        <MudButton OnClick="HandleSubmit" Class="ml-auto mt-3" Variant="Variant.Filled" Color="Color.Primary" Disabled="@model.RequestedAccess">
+                        <MudButton OnClick="HandleRequestEditAccess" Class="ml-auto mt-3" Variant="Variant.Filled" Color="Color.Primary" Disabled="@model.RequestedAccess">
                             <MudText>Request Access To Add/Edit Recipes</MudText>
                         </MudButton>
                     }
                 }
+                <MudButton Disabled="@(loading || !isValid)" OnClick="HandleSubmit" Class="ml-auto mt-3" Variant="Variant.Filled" Color="Color.Primary">
+                    @if (loading)
+                    {
+                        <MudProgressCircular Class="ms-n1" Size="Size.Small" Indeterminate="true" />
+                        <MudText Class="ms-2">Working...</MudText>
+                    }
+                    else
+                    {
+                        <MudText>Save</MudText>
+                    }
+                </MudButton>
             </MudForm>
         </MudPaper>
         <div hidden="@(!showMessage)">
@@ -42,7 +57,7 @@
 
 @code {
     private bool isValid;
-    private MudForm form;
+    private MudForm? form;
     private UserModel model = new UserModel();
     private bool loading;
     private string message;
@@ -60,13 +75,43 @@
         }
     }
 
-    private async void HandleSubmit()
+    private async void HandleRequestEditAccess()
     {
         loading = true;
         try
         {
             showMessage = false;
             var result = await UserService.RequestEditAccess();
+            if (result.Success)
+            {
+                await AuthenticationService.ResetLocalUser();
+            }
+            message = result.Message;
+            severity = result.Success ? Severity.Success : Severity.Error;
+            showMessage = true;
+            loading = false;
+        }
+        catch (Exception ex)
+        {
+            message = "An error occurred.";
+            severity = Severity.Error;
+            showMessage = true;
+            loading = false;
+        }
+        StateHasChanged();
+    }
+
+    private async void HandleSubmit()
+    {
+        loading = true;
+        try
+        {
+            showMessage = false;
+            UpdateUserRequest request = new UpdateUserRequest()
+            {
+                Name = model?.Name
+            };
+            var result = await UserService.Update(request);
             if (result.Success)
             {
                 await AuthenticationService.ResetLocalUser();

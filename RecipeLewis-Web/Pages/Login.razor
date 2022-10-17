@@ -13,10 +13,6 @@
     <MudItem lg="6">
         <MudPaper Class="pa-4">
             <MudForm @ref="form" @bind-IsValid="@isValid">
-                <div class="alert alert-info">
-                    Email: user@example.com<br />
-                    Password: string
-                </div>
                 <MudTextField T="string" Label="Email" @bind-Value="@model.Email" Immediate="true" Required="true" RequiredError="Email is required!" InputType="InputType.Email" InputMode="InputMode.email" />
                 <MudTextField T="string" Label="Password" @bind-Value="@model.Password" Required="true" Immediate="true" InputType="InputType.Password"
                 Adornment="Adornment.End" AdornmentIcon="@PasswordInputIcon" OnAdornmentClick="ShowPasswordClick" RequiredError="Password is required!" />
