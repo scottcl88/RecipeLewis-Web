@@ -26,5 +26,6 @@ public class UserModel : EntityDataModel
     public bool RequestedAccess { get; set; }
     public DateTime? RequestedAccessExpires { get; set; }
     public string? Token { get; set; }
+    public string? RefreshToken { get; set; }
     public bool IsVerified { get; set; }
 }
