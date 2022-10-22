@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 
 namespace RecipeLewis.Business;
+
 public class OrganizationProfile : Profile
 {
     public OrganizationProfile()

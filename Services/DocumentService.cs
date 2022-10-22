@@ -1,8 +1,4 @@
 using Models.Results;
-using RecipeLewis.Models;
-using RecipeLewis.Models.Requests;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace BlazorApp.Services;
 
@@ -19,8 +15,9 @@ public class DocumentService : IDocumentService
     {
         _httpService = httpService;
     }
+
     public async Task<List<UploadResult>> Upload(MultipartFormDataContent request, int recipeId)
     {
-        return await _httpService.PostForm<List<UploadResult>>("documents/upload/multiple/"+recipeId, request);
+        return await _httpService.PostForm<List<UploadResult>>("documents/upload/multiple/" + recipeId, request);
     }
 }

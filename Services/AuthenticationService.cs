@@ -1,16 +1,10 @@
 using Microsoft.AspNetCore.Components;
 using Models.Results;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using RecipeLewis.Models;
-using RecipeLewis.Models.Requests;
 using RecipeLewis.Models.Results;
-using System;
 using System.IdentityModel.Tokens.Jwt;
-using System.Net.Http;
-using System.Net.Http.Headers;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace BlazorApp.Services
 {
@@ -18,12 +12,17 @@ namespace BlazorApp.Services
     {
         public UserModel? User { get; set; }
     }
+
     public interface IAuthenticationService
     {
         UserModel User { get; }
+
         Task Initialize();
+
         Task Login(string email, string password);
+
         Task Logout();
+
         Task ResetLocalUser();
     }
 
@@ -76,6 +75,7 @@ namespace BlazorApp.Services
                 RefreshTokenLoop(_cts.Token);
             }
         }
+
         private void RefreshTokenLoop(CancellationToken token)
         {
             _refreshTokenLoopStarted = true;
@@ -92,6 +92,7 @@ namespace BlazorApp.Services
                 }
             }, token);
         }
+
         public async Task ResetLocalUser()
         {
             var token = _authUser.User?.Token;
@@ -101,6 +102,7 @@ namespace BlazorApp.Services
             _authUser.User.RefreshToken = refreshToken;
             await _localStorageService.SetItem("user", _authUser.User);
         }
+
         public async Task Logout()
         {
             _authUser.User = null;
@@ -108,6 +110,7 @@ namespace BlazorApp.Services
             _navigationManager.NavigateTo("login");
             _cts?.Cancel();
         }
+
         public async Task<GenericResult> RevokeToken(RevokeTokenRequest request)
         {
             return await _httpService.Post<GenericResult>($"users/revoke-token", request);

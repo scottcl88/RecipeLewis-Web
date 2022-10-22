@@ -1,8 +1,6 @@
 using BlazorApp.Services;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Rendering;
-using System;
 using System.Net;
 
 namespace BlazorApp.Helpers;

@@ -1,7 +1,5 @@
-﻿using Newtonsoft.Json.Converters;
-using System.Text.Json.Serialization;
+﻿namespace RecipeLewis.Models;
 
-namespace RecipeLewis.Models;
 public enum Role
 {
     Unknown,
@@ -9,6 +7,7 @@ public enum Role
     Editor,
     Admin
 }
+
 public record class UserId(int Value);
 
 public class UserModel : EntityDataModel

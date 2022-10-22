@@ -1,6 +1,4 @@
 ﻿using Newtonsoft.Json;
-using RecipeLewis.Models;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace RecipeLewis.Models;
 
@@ -14,9 +12,10 @@ public class DocumentModel : EntityDataUserModel
     public long ByteSize { get; set; }
     public byte[] Bytes { get; set; }
     public Guid DocumentKey { get; set; }
+
     [JsonIgnore]
     public bool NotUploaded { get; set; }
+
     [JsonIgnore]
     public string ImgSrc { get; set; }
 }
-

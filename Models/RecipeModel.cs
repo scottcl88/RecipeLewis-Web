@@ -1,8 +1,7 @@
-﻿using System.Text.Json.Serialization;
-
-namespace RecipeLewis.Models;
+﻿namespace RecipeLewis.Models;
 
 public record class RecipeId(int Value);
+
 public class RecipeModel : EntityDataUserModel
 {
     public int RecipeId { get; set; }

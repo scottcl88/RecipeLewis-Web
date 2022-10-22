@@ -2,25 +2,27 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using RecipeLewis.Models;
-using System;
-using System.Collections.Generic;
 using System.Net;
-using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Text;
+
 //using System.Text.Json;
-using System.Threading.Tasks;
 
 namespace BlazorApp.Services
 {
     public interface IHttpService
     {
         Task<T> Get<T>(string uri);
+
         Task<T> Post<T>(string uri, object? value = null);
+
         Task<T> PostForm<T>(string uri, MultipartFormDataContent formData);
+
         Task<T> Put<T>(string uri, object value);
+
         Task<T> Delete<T>(string uri);
+
         string GetBaseAddress();
     }
 
@@ -43,10 +45,12 @@ namespace BlazorApp.Services
             _localStorageService = localStorageService;
             _configuration = configuration;
         }
+
         public string GetBaseAddress()
         {
             return _httpClient.BaseAddress?.AbsoluteUri;
         }
+
         public async Task<T> Get<T>(string uri)
         {
             var request = new HttpRequestMessage(HttpMethod.Get, uri);
@@ -56,12 +60,13 @@ namespace BlazorApp.Services
         public async Task<T> Post<T>(string uri, object? value = null)
         {
             var request = new HttpRequestMessage(HttpMethod.Post, uri);
-            if(value != null)
+            if (value != null)
             {
                 request.Content = new StringContent(JsonConvert.SerializeObject(value), Encoding.UTF8, "application/json");
             }
             return await sendRequest<T>(request);
         }
+
         public async Task<T> PostForm<T>(string uri, MultipartFormDataContent formData)
         {
             var request = new HttpRequestMessage(HttpMethod.Post, uri);
@@ -76,6 +81,7 @@ namespace BlazorApp.Services
             request.Content = new StringContent(JsonConvert.SerializeObject(value), Encoding.UTF8, "application/json");
             return await sendRequest<T>(request);
         }
+
         public async Task<T> Delete<T>(string uri)
         {
             var request = new HttpRequestMessage(HttpMethod.Delete, uri);

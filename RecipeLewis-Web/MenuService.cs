@@ -1,8 +1,5 @@
-﻿using AutoMapper;
-using RecipeLewis.Models;
-using RecipeLewis.Models.Requests;
+﻿namespace RecipeLewis.Business;
 
-namespace RecipeLewis.Business;
 public class MenuService
 {
     public bool IsAuthenticated { get; private set; }

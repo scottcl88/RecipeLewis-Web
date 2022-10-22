@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace RecipeLewis.Models.Requests;
+﻿namespace RecipeLewis.Models.Requests;
 
 public class CreateRecipeRequest
 {
@@ -21,6 +19,7 @@ public class CreateRecipeRequest
     public CategoryModel Category { get; set; }
     public List<TagModel> Tags { get; set; } = new List<TagModel>();
 }
+
 public class UpdateRecipeRequest
 {
     public RecipeId Id { get; set; }

@@ -34,7 +34,7 @@ a, .btn-link {
     color: red;
 }
 
-.pointer{
+.pointer {
     cursor: pointer !important;
 }
 
@@ -47,7 +47,6 @@ a, .btn-link {
         position: fixed;
     }
 }
-
 
 #blazor-error-ui {
     background: lightyellow;
