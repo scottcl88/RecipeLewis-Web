@@ -70,7 +70,6 @@
     }
     public async Task HandlePromote(UserModel user)
     {
-        Console.WriteLine("UserModel UserId: " + user.UserId);
         var currentRole = user.Role;
         var roleValue = (int)currentRole;
         var promoteValue = roleValue + 1;
@@ -94,7 +93,6 @@
     }
     public async Task HandleDemote(UserModel user)
     {
-        Console.WriteLine("UserModel UserId 1: " + user.UserId);
         var currentRole = user.Role;
         var roleValue = (int)currentRole;
         var demoteValue = roleValue - 1;

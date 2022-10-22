@@ -29,10 +29,10 @@
                         <MudTextField T="string" Label="Title" Immediate="true" @bind-Value="@model.Title" Required="true" RequiredError="Title is required!" />
                     </MudItem>
                     <MudItem xs="12" sm="12" md="6" lg="6">
-                        <MudTextField T="string" Label="Author" @bind-Value="@model.Author" />
+                        <MudTextField T="string" Label="Author" Immediate="true" @bind-Value="@model.Author" />
                     </MudItem>
                     <MudItem xs="12" sm="12" md="6" lg="6">
-                        <MudSelect T="CategoryModel" @bind-Value="@model.Category" Label="Category" AnchorOrigin="Origin.BottomCenter">
+                        <MudSelect T="CategoryModel" @bind-Value="@model.Category" Label="Category" Immediate="true" AnchorOrigin="Origin.BottomCenter">
                             @foreach (var category in categories)
                             {
                                 <MudSelectItem Value="@category"></MudSelectItem>
@@ -40,7 +40,7 @@
                         </MudSelect>
                     </MudItem>
                     <MudItem xs="12" sm="12" md="6" lg="6">
-                        <MudTextField T="string" Label="Yield" @bind-Value="@model.Yield" />
+                        <MudTextField T="string" Label="Yield" @bind-Value="@model.Yield" Immediate="true" />
                     </MudItem>
                     <MudItem xs="12" sm="12" md="12" lg="12">
                         <MudInputLabel Class="bold">Tags</MudInputLabel>
@@ -56,18 +56,18 @@
                         <MudButton Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Add" OnClick="AddTag" Color="Color.Secondary" Style="margin-top: 15px;">Add</MudButton>
                     </MudItem>
                     <MudItem xs="12" sm="12" md="12" lg="12">
-                        <MudTextField T="string" Label="Description" @bind-Value="@model.Description" Lines="3" />
-                        <MudTextField T="string" Label="Storage" @bind-Value="@model.Storage" Lines="3" />
-                        <MudTextField T="string" Label="Nutrition" @bind-Value="@model.Nutrition" />
+                        <MudTextField T="string" Label="Description" Immediate="true" @bind-Value="@model.Description" Lines="3" />
+                        <MudTextField T="string" Label="Storage" Immediate="true" @bind-Value="@model.Storage" Lines="3" />
+                        <MudTextField T="string" Label="Nutrition" Immediate="true" @bind-Value="@model.Nutrition" />
                     </MudItem>
                     <MudItem xs="12" sm="12" md="4" lg="4">
                         <MudInputLabel Class="bold">Prep Time</MudInputLabel>
                         <MudGrid>
                             <MudItem xs="6" sm="6" md="6" lg="4">
-                                <MudNumericField @bind-Value="@prepTimeHours" Label="Hours" Variant="Variant.Text" Min="0" Max="99" />
+                                <MudNumericField @bind-Value="@prepTimeHours" Label="Hours" Immediate="true" Variant="Variant.Text" Min="0" Max="99" />
                             </MudItem>
                             <MudItem xs="6" sm="6" md="6" lg="4">
-                                <MudNumericField @bind-Value="@prepTimeMinutes" Label="Minutes" Variant="Variant.Text" Min="0" Max="59" />
+                                <MudNumericField @bind-Value="@prepTimeMinutes" Label="Minutes" Immediate="true" Variant="Variant.Text" Min="0" Max="59" />
                             </MudItem>
                         </MudGrid>
                     </MudItem>
@@ -75,10 +75,10 @@
                         <MudInputLabel Class="bold">Cook Time</MudInputLabel>
                         <MudGrid>
                             <MudItem xs="6" sm="6" md="6" lg="4">
-                                <MudNumericField @bind-Value="@cookTimeHours" Label="Hours" Variant="Variant.Text" Min="0" Max="99" />
+                                <MudNumericField @bind-Value="@cookTimeHours" Label="Hours" Immediate="true" Variant="Variant.Text" Min="0" Max="99" />
                             </MudItem>
                             <MudItem xs="6" sm="6" md="6" lg="4">
-                                <MudNumericField @bind-Value="@cookTimeMinutes" Label="Minutes" Variant="Variant.Text" Min="0" Max="59" />
+                                <MudNumericField @bind-Value="@cookTimeMinutes" Label="Minutes" Immediate="true" Variant="Variant.Text" Min="0" Max="59" />
                             </MudItem>
                         </MudGrid>
                     </MudItem>
@@ -86,10 +86,10 @@
                         <MudInputLabel Class="bold">Total Time</MudInputLabel>
                         <MudGrid>
                             <MudItem xs="6" sm="6" md="6" lg="4">
-                                <MudNumericField @bind-Value="@totalTimeHours" Label="Hours" Variant="Variant.Text" Min="0" Max="99" />
+                                <MudNumericField @bind-Value="@totalTimeHours" Label="Hours" Immediate="true" Variant="Variant.Text" Min="0" Max="99" />
                             </MudItem>
                             <MudItem xs="6" sm="6" md="6" lg="4">
-                                <MudNumericField @bind-Value="@totalTimeMinutes" Label="Minutes" Variant="Variant.Text" Min="0" Max="59" />
+                                <MudNumericField @bind-Value="@totalTimeMinutes" Label="Minutes" Immediate="true" Variant="Variant.Text" Min="0" Max="59" />
                             </MudItem>
                         </MudGrid>
                     </MudItem>
@@ -255,7 +255,7 @@
     List<CategoryModel> categories = new List<CategoryModel>();
     List<DocumentModel> documents = new List<DocumentModel>();
     List<DocumentModel> documentsToDelete = new List<DocumentModel>();
-    private MudTextField<string> tagReference;
+    private MudTextField<string>? tagReference;
     private bool clearing = false;
     private static string DefaultDragClass = "relative rounded-lg border-2 border-dashed pa-4 mud-width-full mud-height-full";
     private string DragClass = DefaultDragClass;
@@ -317,7 +317,7 @@
                     }
 
                     documents.Add(documentModel);
-                    fileNames.Add(file.Name);
+                    fileNames.Add(file.Name);                    
                     upload = true;
                 }
                 catch (Exception ex)
@@ -358,13 +358,11 @@
         fileNames.RemoveAll(x => x == chip.Text);
         documentsToDelete.AddRange(documents.Where(x => x.FileName == chip.Text && !x.NotUploaded));
         documents.RemoveAll(x => x.FileName == chip.Text);
-        Console.WriteLine(content);
     }
     public void RemoveFileFromBadge(int documentId)
     {
         documentsToDelete.AddRange(documents.Where(x => x.DocumentId == documentId && !x.NotUploaded));
         documents.RemoveAll(x => x.DocumentId == documentId);
-        Console.WriteLine(content);
     }
 
     public void AddTag()
@@ -404,9 +402,12 @@
             "QuillFunctions.getQuillContent", divDirectionsEditorElement);
             showError = false;
             RecipeModel result = null;
+            bool isNew = false;
             if (recipeId <= 0)
             {
                 result = await RecipeService.Create(model);
+                recipeId = result.RecipeId;
+                isNew = true;
             }
             else
             {
@@ -414,29 +415,23 @@
                 updateRequest.Id = new RecipeId(recipeId);
                 updateRequest.DocumentsToDelete = documentsToDelete;
                 result = await RecipeService.Update(updateRequest);
-                Console.WriteLine("Result: ");
-                Console.WriteLine(result);
             }
             if (upload)
             {
-                Console.WriteLine("Result 2");
                 var response = await DocumentService.Upload(content, recipeId);
-                Console.WriteLine("Result 3");
-                //content.Dispose();
 
                 if (response != null)
                 {
                     uploadResults = uploadResults.Concat(response).ToList();
                 }
             }
-            Console.WriteLine("Result 0");
             if (result == null)
             {
                 Snackbar.Add("An error occured!", Severity.Error, config => { config.ShowCloseIcon = true; });
             }
             else
             {
-                if (recipeId <= 0)
+                if (isNew)
                 {
                     Snackbar.Add("Successfully added recipe!", Severity.Success, config => { config.ShowCloseIcon = true; });
                 }

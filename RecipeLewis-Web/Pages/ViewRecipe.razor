@@ -62,22 +62,44 @@
                     </MudItem>
                     <MudItem xs="4" sm="4" md="4" lg="4">
                         <MudInputLabel Class="bold">Prep Time</MudInputLabel>
-                        @if(model.PrepTime.HasValue){
-                            <MudText>@model.PrepTime.Value.ToString("h' hr. 'm' min.'")</MudText>
+                        @if (model.PrepTime.HasValue)
+                        {
+                            @if (model.PrepTime.Value.Hours > 0)
+                            {
+                                <MudText>@model.PrepTime.Value.ToString("h' hr. 'm' min.'")</MudText>
+                            }
+                            else
+                            {
+                                <MudText>@model.PrepTime.Value.ToString("m' min.'")</MudText>
+                            }
                         }
                     </MudItem>
                     <MudItem xs="4" sm="4" md="4" lg="4">
                         <MudInputLabel Class="bold">Cook Time</MudInputLabel>
                         @if (model.CookTime.HasValue)
                         {
-                            <MudText>@model.CookTime.Value.ToString("h' hr. 'm' min.'")</MudText>
+                            @if (model.CookTime.Value.Hours > 0)
+                            {
+                                <MudText>@model.CookTime.Value.ToString("h' hr. 'm' min.'")</MudText>
+                            }
+                            else
+                            {
+                                <MudText>@model.CookTime.Value.ToString("m' min.'")</MudText>
+                            }
                         }
                     </MudItem>
                     <MudItem xs="4" sm="4" md="4" lg="4">
                         <MudInputLabel Class="bold">Total Time</MudInputLabel>
                         @if (model.TotalTime.HasValue)
                         {
-                            <MudText>@model.TotalTime.Value.ToString("h' hr. 'm' min.'")</MudText>
+                            @if (model.TotalTime.Value.Hours > 0)
+                            {
+                                <MudText>@model.TotalTime.Value.ToString("h' hr. 'm' min.'")</MudText>
+                            }
+                            else
+                            {
+                                <MudText>@model.TotalTime.Value.ToString("m' min.'")</MudText>
+                            }
                         }
                     </MudItem>
                     <MudItem xs="12" sm="12" md="12" lg="12" class="ma-auto">
@@ -93,12 +115,12 @@
                             </div>
                         </MudItem>
                         <MudItem xs="6" sm="6" md="6" lg="6">
-                                <MudInputLabel Class="bold">Recipe Record Created By</MudInputLabel>
-                                <MudText>@model.CreatedBy?.Name</MudText>
+                            <MudInputLabel Class="bold">Recipe Record Created By</MudInputLabel>
+                            <MudText>@model.CreatedBy?.Name</MudText>
                         </MudItem>
                         <MudItem xs="6" sm="6" md="6" lg="6">
                             <MudInputLabel Class="bold">Recipe Record Last Modified By</MudInputLabel>
-                                <MudText>@model.ModifiedBy?.Name</MudText>
+                            <MudText>@model.ModifiedBy?.Name</MudText>
                         </MudItem>
                         <MudItem xs="12" sm="12" md="12" lg="12" Class="d-print-none">
                             <MudPaper Outlined="true">

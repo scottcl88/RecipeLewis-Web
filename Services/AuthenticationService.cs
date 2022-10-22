@@ -59,8 +59,6 @@ namespace BlazorApp.Services
         public async Task Initialize()
         {
             _authUser.User = await _localStorageService.GetItem<UserModel>("user");
-            //await this.ResetLocalUser();
-            Console.WriteLine("AuthService Initialize called. " + _authUser?.User?.Token);
             if (_authUser?.User != null && !string.IsNullOrEmpty(_authUser.User.Token) && !_refreshTokenLoopStarted)
             {
                 _cts = new CancellationTokenSource();
@@ -72,7 +70,6 @@ namespace BlazorApp.Services
         {
             _authUser.User = await _httpService.Post<UserModel>("users/authenticate", new { Email = email, Password = password });
             await _localStorageService.SetItem("user", _authUser.User);
-            Console.WriteLine("Logged in with Refresh Token: " + _authUser.User.Token);
             if (_authUser?.User != null && !string.IsNullOrEmpty(_authUser.User.Token) && !_refreshTokenLoopStarted)
             {
                 _cts = new CancellationTokenSource();
@@ -85,14 +82,12 @@ namespace BlazorApp.Services
             Task.Run(async () => {
                 while (!token.IsCancellationRequested)
                 {
-                    Console.WriteLine("Attempting RefreshToken");
                     await RefreshToken();
                     var getExpiryTime = GetTokenExpirationTime(_authUser.User.Token);
                     var expTime = DateTimeOffset.FromUnixTimeSeconds(getExpiryTime);
                     var timeUTC = DateTime.UtcNow;
                     var diff = expTime - timeUTC;
                     diff = diff.Subtract(TimeSpan.FromMinutes(2));
-                    Console.WriteLine("Scheduling RefreshToken. Next one: " + diff.ToString());
                     await Task.Delay(diff, token);
                 }
             }, token);
@@ -105,7 +100,6 @@ namespace BlazorApp.Services
             _authUser.User.Token = token;
             _authUser.User.RefreshToken = refreshToken;
             await _localStorageService.SetItem("user", _authUser.User);
-            Console.WriteLine("ResetLocalUser has set: " + _authUser?.User?.Token);
         }
         public async Task Logout()
         {
@@ -121,7 +115,6 @@ namespace BlazorApp.Services
 
         public async Task RefreshToken()
         {
-            Console.WriteLine("RefreshToken called");
             var user = await _localStorageService.GetItem<UserModel>("user");
             if (user == null)
             {
@@ -144,31 +137,12 @@ namespace BlazorApp.Services
                 _cts.Cancel();
                 return;
             }
-            Console.WriteLine("Done with refresh token request");
             var refreshContent = await refreshResult.Content.ReadAsStringAsync();
-            Console.WriteLine("Done with refresh token request 2 " + refreshContent);
             var result = JsonConvert.DeserializeObject<AuthenticateResponse>(refreshContent);
-            Console.WriteLine("Refresh token responded successfully. " + result.RefreshToken);
             _authUser.User.RefreshToken = result.RefreshToken;
             _authUser.User.Token = result.Token;
             await _localStorageService.SetItem("user", _authUser.User);
-            Console.WriteLine("RefreshToken updated = " + result.RefreshToken);
         }
-        //private async Task TryRefreshToken()
-        //{
-        //    var user = await _localStorageService.GetItem<UserModel>("user");
-        //    if (user == null || string.IsNullOrEmpty(user.Token)) return string.Empty;
-        //    var expiryTime = GetTokenExpirationTime(user.Token);
-        //    var expTime = DateTimeOffset.FromUnixTimeSeconds(Convert.ToInt64(expiryTime));
-        //    var timeUTC = DateTime.UtcNow;
-        //    var diff = expTime - timeUTC;
-        //    Console.WriteLine("TryRefreshToken: " + diff);
-        //    if (diff.TotalMinutes <= 2)
-        //    {
-        //        var authResponse = await RefreshToken();
-        //        return authResponse?.Token;
-        //    }
-        //}
 
         private static long GetTokenExpirationTime(string token)
         {
@@ -176,20 +150,7 @@ namespace BlazorApp.Services
             var jwtSecurityToken = handler.ReadJwtToken(token);
             var tokenExp = jwtSecurityToken.Claims.First(claim => claim.Type.Equals("exp")).Value;
             var ticks = long.Parse(tokenExp);
-            Console.WriteLine("tokenExp: " + tokenExp + " ticks: " + ticks);
             return ticks;
         }
-
-        //private static bool CheckTokenIsValid(string token)
-        //{
-        //    var tokenTicks = GetTokenExpirationTime(token);
-        //    var tokenDate = DateTimeOffset.FromUnixTimeSeconds(tokenTicks).UtcDateTime;
-
-        //    var now = DateTime.Now.ToUniversalTime();
-
-        //    var valid = tokenDate >= now;
-
-        //    return valid;
-        //}
     }
 }

@@ -7,8 +7,10 @@
 
 <MudNavMenu>
     <MudNavLink Href="/recipes" Match="NavLinkMatch.Prefix">Recipes</MudNavLink>
-    <MudNavLink Href="/about" Match="NavLinkMatch.Prefix">About</MudNavLink>
-    <MudNavLink Href="/profile" Match="NavLinkMatch.Prefix">Profile</MudNavLink>
+    <MudNavLink Href="/about" Match="NavLinkMatch.Prefix">About</MudNavLink>    
+    <div hidden="@(!loggedIn)">
+        <MudNavLink Href="/profile" Match="NavLinkMatch.Prefix">Profile</MudNavLink>
+    </div>
     @if (userRole == Role.Admin)
     {
         <MudNavLink Href="/admin" Match="NavLinkMatch.Prefix">Admin</MudNavLink>
