@@ -22,7 +22,6 @@
         <MudTh>Category</MudTh>
         <MudTh>Tags</MudTh>
         <MudTh>...</MudTh>
-        <MudTh>...</MudTh>
     </HeaderContent>
     <RowTemplate>
         <MudTd DataLabel="Title">@context.Title</MudTd>
@@ -37,17 +36,21 @@
             </MudChipSet>
         </MudTd>
         <MudTd DataLabel="...">
-            <MudButton Href=@("/recipe/view?recipeId="+context.RecipeId)>View</MudButton>
-        </MudTd>
-        <MudTd DataLabel="...">
+            <MudButton Href=@("/recipe/view?recipeId="+context.RecipeId)>
+                <MudIcon Icon="@Icons.Filled.RemoveRedEye" />
+            </MudButton>
             @if (canEdit)
             {
-                <MudButton Href=@("/recipe/edit?recipeId="+context.RecipeId) Disabled="@(!canEdit)">Edit</MudButton>
+                <MudButton Href=@("/recipe/edit?recipeId="+context.RecipeId) Disabled="@(!canEdit)">
+                    <MudIcon Icon="@Icons.Filled.Edit" />
+                </MudButton>
             }
             else
             {
                 <MudTooltip Text="Go to your Profile to request access to edit" Color="Color.Primary" Placement="Placement.Top">
-                    <MudButton Href=@("/recipe/edit?recipeId="+context.RecipeId) Disabled="@(!canEdit)">Edit</MudButton>
+                    <MudButton Href=@("/recipe/edit?recipeId="+context.RecipeId) Disabled="@(!canEdit)">
+                        <MudIcon Icon="@Icons.Filled.Edit" />
+                    </MudButton>
                 </MudTooltip>
             }
         </MudTd>
