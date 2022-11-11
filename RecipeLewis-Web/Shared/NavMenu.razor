@@ -28,7 +28,15 @@
     private Role userRole;
     public async Task HandleLogout()
     {
-        var dialog = DialogService.Show<LogoutDialog>("Logout");
+        var parameters = new DialogParameters();
+        parameters.Add("ContentText", "Are you sure you want to log out?");
+        parameters.Add("YesText", "Log out");
+        parameters.Add("NoText", "Cancel");
+        parameters.Add("Color", Color.Error);
+        parameters.Add("TitleText", "Are you sure?");
+        parameters.Add("TitleIcon", Icons.Material.Filled.Logout);
+
+        var dialog = DialogService.Show<ConfirmDialog>("Logout", parameters);
         var result = await dialog.Result;
 
         if (!result.Cancelled)

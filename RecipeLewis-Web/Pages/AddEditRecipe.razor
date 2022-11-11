@@ -233,6 +233,19 @@
                         }
                     </MudButton>
                 </MudItem>
+                <MudItem xs="12" sm="12" md="12" lg="12" hidden="@(recipeId <= 0)">
+                    <MudButton Disabled="@loading" OnClick="HandleCancel" Variant="Variant.Filled" Color="Color.Tertiary">
+                        @if (loading)
+                        {
+                            <MudProgressCircular Class="ms-n1" Size="Size.Small" Indeterminate="true" />
+                            <MudText Class="ms-2">Working...</MudText>
+                        }
+                        else
+                        {
+                            <MudText>Cancel</MudText>
+                        }
+                    </MudButton>
+                </MudItem>
             </MudGrid>
         </MudPaper>
     </MudItem>
@@ -452,9 +465,35 @@
             StateHasChanged();
         }
     }
+    private async void HandleCancel()
+    {
+        var parameters = new DialogParameters();
+        parameters.Add("ContentText", "Do you really want to cancel your changes?");
+        parameters.Add("YesText", "Yes");
+        parameters.Add("NoText", "No");
+        parameters.Add("Color", Color.Tertiary);
+        parameters.Add("TitleText", "Cancel Changes");
+        parameters.Add("TitleIcon", Icons.Material.Filled.Cancel);
+
+        var dialog = DialogService.Show<ConfirmDialog>("Cancel Changes", parameters);
+        var result = await dialog.Result;
+
+        if (!result.Cancelled)
+        {
+            NavigationManager.NavigateTo("/recipes");
+        }
+    }
     private async void HandleDelete()
     {
-        var dialog = DialogService.Show<DeleteDialog>("Delete Recipe");
+        var parameters = new DialogParameters();
+        parameters.Add("ContentText", "Do you really want to delete this recipe?");
+        parameters.Add("YesText", "Delete");
+        parameters.Add("NoText", "Cancel");
+        parameters.Add("Color", Color.Error);
+        parameters.Add("TitleText", "Delete Recipe");
+        parameters.Add("TitleIcon", Icons.Material.Filled.DeleteForever);
+
+        var dialog = DialogService.Show<ConfirmDialog>("Delete Recipe", parameters);
         var result = await dialog.Result;
 
         if (!result.Cancelled)
