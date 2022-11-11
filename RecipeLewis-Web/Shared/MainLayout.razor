@@ -1,6 +1,7 @@
 ﻿@inherits LayoutComponentBase
+@inject MenuService MenuService
 
-<MudThemeProvider @ref="@_mudThemeProvider"  @bind-IsDarkMode="@_isDarkMode" />
+<MudThemeProvider @ref="@_mudThemeProvider" @bind-IsDarkMode="@DarkMode" />
 <MudDialogProvider />
 <MudSnackbarProvider />
 
@@ -11,7 +12,7 @@
     </MudAppBar>
     <MudDrawer @bind-Open="_drawerOpen" ClipMode="DrawerClipMode.Always" Elevation="2" Class="d-print-none">
         <NavMenu />
-        <MudSwitch @bind-Checked="@_isDarkMode" Color="Color.Primary" Class="ma-4" T="bool" Label="Dark Mode" />
+        <MudSwitch @bind-Checked="@DarkMode" Color="Color.Primary" Class="ma-4" T="bool" Label="Dark Mode" />
         <p style="padding-left: 25px; bottom: 0%; position: fixed;">
             <a target="_blank" href="https://icons8.com/icon/oj3YGxooY6PN/cookbook">Cookbook</a> icon by <a target="_blank" href="https://icons8.com">Icons8</a>
         </p>
@@ -28,6 +29,19 @@
     private bool _isDarkMode;
     bool _drawerOpen = true;
 
+    public bool DarkMode
+    {
+        get
+        {
+            return _isDarkMode;
+        }
+        set
+        {
+            MenuService.SetDarkMode(value);
+            _isDarkMode = value;
+        }
+    }
+
     void DrawerToggle()
     {
         _drawerOpen = !_drawerOpen;
@@ -37,9 +51,16 @@
         if (firstRender)
         {
             _isDarkMode = await _mudThemeProvider?.GetSystemPreference();
+            MenuService.OnChange += () => MenuStateHasChanged();
             StateHasChanged();
         }
     }
+    private void MenuStateHasChanged()
+    {
+        _isDarkMode = MenuService.IsDarkMode;
+        StateHasChanged();
+    }
+
 }
 <style>
       @@media print {

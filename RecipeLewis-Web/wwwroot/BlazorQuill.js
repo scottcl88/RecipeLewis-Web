@@ -1,7 +1,7 @@
 ﻿(function () {
     window.QuillFunctions = {
         createQuill: function (quillElement, toolbarId, placeholder) {
-            var options = {
+            let options = {
                 debug: 'error',
                 modules: {
                     toolbar: toolbarId
@@ -10,8 +10,6 @@
                 readOnly: false,
                 theme: 'snow'
             };
-            // set quill at the object we can call
-            // methods on later
             new Quill(quillElement, options);
         },
         getQuillContent: function (quillControl) {
@@ -22,13 +20,31 @@
         },
         loadQuillContent: function (quillControl, quillContent) {
             try {
-                content = JSON.parse(quillContent);
+                let content = JSON.parse(quillContent);
                 return quillControl.__quill.setContents(content, 'api');
             } catch (err) {
                 console.error(err);
                 return;
             }
         },
+        loadDarkModeCss: function () {
+            if (document.head.querySelector("link[href='css/quill_darkmode.css']") == null)
+            {
+                let link = document.createElement('link');
+                link.type = 'text/css';
+                link.rel = 'stylesheet';
+                link.title = 'quillDarkMode';
+                link.href = "css/quill_darkmode.css";
+
+                document.head.appendChild(link);
+            }
+        },
+        loadLightModeCss: function () {
+            if (document.head.querySelector("link[href='css/quill_darkmode.css']") != null)
+            {
+                document.head.querySelector("link[href='css/quill_darkmode.css']").remove();
+            }
+        }
     };
 })();
 //Reference https://blazorhelpwebsite.com/ViewBlogPost/12

@@ -1,0 +1,15 @@
+﻿.ql-stroke {
+    stroke: white !important;
+}
+
+.ql-fill {
+    fill: white !important;
+}
+
+.ql-picker-label {
+    color: white !important;
+}
+
+button.ql-active .ql-stroke {
+    stroke: rgb(11, 133, 255) !important;
+}

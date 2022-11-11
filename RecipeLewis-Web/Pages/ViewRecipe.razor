@@ -13,6 +13,7 @@
 @inject IMapper Mapper
 @inject IDialogService DialogService
 @inject IHttpService HttpService
+@inject MenuService MenuService
 
 <PageTitle>@model.Title</PageTitle>
 
@@ -194,6 +195,9 @@
     }
     public async Task HandlePrint()
     {
+        var originalDarkMode = MenuService.IsDarkMode;
+        await MenuService.SetDarkMode(false);
         await JSRuntime.InvokeVoidAsync("print");
+        await MenuService.SetDarkMode(originalDarkMode);
     }
 }
