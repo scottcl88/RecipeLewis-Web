@@ -183,7 +183,7 @@
         {
             loading = true;
             model = await RecipeService.GetRecipe(recipeId);
-            documents = model.Documents;
+            documents = await RecipeService.GetRecipeDocuments(recipeId);
             loading = false;
             StateHasChanged();
         }

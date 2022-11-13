@@ -535,7 +535,7 @@
             if (recipeId > 0)
             {
                 var recipeModel = await RecipeService.GetRecipe(recipeId);
-                documents = recipeModel.Documents;
+                documents = await RecipeService.GetRecipeDocuments(recipeId);
                 model = Mapper.Map<CreateRecipeRequest>(recipeModel);
             }
             categories = await RecipeService.GetCategories();

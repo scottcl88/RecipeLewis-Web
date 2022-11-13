@@ -10,6 +10,7 @@ public interface IRecipeService
     Task<List<RecipeModel>> GetRecipes();
 
     Task<RecipeModel> GetRecipe(int recipeId);
+    Task<List<DocumentModel>> GetRecipeDocuments(int recipeId);
 
     Task<RecipeModel> Create(CreateRecipeRequest request);
 
@@ -40,6 +41,10 @@ public class RecipeService : IRecipeService
     public async Task<RecipeModel> GetRecipe(int recipeId)
     {
         return await _httpService.Get<RecipeModel>("recipes/" + recipeId);
+    }
+    public async Task<List<DocumentModel>> GetRecipeDocuments(int recipeId)
+    {
+        return await _httpService.Get<List<DocumentModel>>("recipes/documents/" + recipeId);
     }
 
     public async Task<RecipeModel> Create(CreateRecipeRequest request)
