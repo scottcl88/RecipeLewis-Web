@@ -10,7 +10,7 @@
     <MudButton Href="/recipe/edit" Class="ml-auto mb-2" Variant="Variant.Filled" Color="Color.Primary">Add Recipe</MudButton>
 </div>
 
-<MudTable Items="@recipes" Hover="true" Striped="true" Filter="new Func<RecipeModel,bool>(FilterFunc1)" @bind-SelectedItem="selectedItem1" Loading="@loading" LoadingProgressColor="Color.Info">
+<MudTable Items="@recipes" Hover="true" Filter="new Func<RecipeModel,bool>(FilterFunc1)" @bind-SelectedItem="selectedItem1" Loading="@loading" LoadingProgressColor="Color.Info">
     <ToolBarContent>
         <MudText Typo="Typo.h6">Recipes</MudText>
         <MudSpacer />
