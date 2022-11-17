@@ -76,3 +76,11 @@ a, .btn-link {
     .blazor-error-boundary::after {
         content: "An error has occurred."
     }
+
+#ingredients > p > p{
+    margin-bottom: 0 !important;
+}
+
+#directions p {
+    margin-bottom: 0 !important;
+}

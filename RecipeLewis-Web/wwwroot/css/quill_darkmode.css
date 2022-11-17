@@ -13,3 +13,7 @@
 button.ql-active .ql-stroke {
     stroke: rgb(11, 133, 255) !important;
 }
+
+.ql-editor.ql-blank::before{
+    color: white !important;
+}

@@ -115,17 +115,17 @@
                                 <MudText>@((MarkupString)model.DirectionsHTML)</MudText>
                             </div>
                         </MudItem>
-                        <MudItem xs="6" sm="6" md="6" lg="6">
+                        <MudItem xs="6" sm="6" md="6" lg="6" Class="d-print-none">
                             <MudInputLabel Class="bold">Recipe Record Created By</MudInputLabel>
                             <MudText>@model.CreatedBy?.Name</MudText>
                         </MudItem>
-                        <MudItem xs="6" sm="6" md="6" lg="6">
+                        <MudItem xs="6" sm="6" md="6" lg="6" Class="d-print-none">
                             <MudInputLabel Class="bold">Recipe Record Last Modified By</MudInputLabel>
                             <MudText>@model.ModifiedBy?.Name</MudText>
                         </MudItem>
                         <MudItem xs="12" sm="12" md="12" lg="12" Class="d-print-none">
                             <MudPaper Outlined="true">
-                            @foreach (var file in documents)
+                                @foreach (var file in documents)
                             {
                                 <MudItem xs="12" sm="12" md="12" lg="3">
                                     <a href="@($"{apiBaseAddress}documents/view/{recipeId}/{file.DocumentId}")" target="_blank" title="Recipe Image">
