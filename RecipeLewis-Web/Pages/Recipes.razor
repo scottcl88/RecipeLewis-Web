@@ -17,11 +17,11 @@
         <MudTextField @bind-Value="searchString1" Immediate="true" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
     </ToolBarContent>
     <HeaderContent>
-        <MudTh>Title</MudTh>
-        <MudTh>Author</MudTh>
-        <MudTh>Category</MudTh>
+        <MudTh><MudTableSortLabel SortBy="new Func<RecipeModel, object>(x=>x.Title)">Title</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel SortBy="new Func<RecipeModel, object>(x=>x.Author)">Author</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel SortBy="new Func<RecipeModel, object>(x=>x.Category?.Name)">Category</MudTableSortLabel></MudTh>
         <MudTh>Tags</MudTh>
-        <MudTh>...</MudTh>
+        <MudTh></MudTh>
     </HeaderContent>
     <RowTemplate>
         <MudTd DataLabel="Title">@context.Title</MudTd>

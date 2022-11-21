@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using MudBlazor.Services;
 using RecipeLewis_Web;
+using Toolbelt.Blazor.Extensions.DependencyInjection;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 var env = builder.HostEnvironment;
@@ -45,5 +46,7 @@ services.AddScoped(x => {
 
 var authenticationService = builder.Build().Services.GetRequiredService<IAuthenticationService>();
 await authenticationService.Initialize();
+
+builder.Services.AddPWAUpdater();
 
 await builder.Build().RunAsync();
