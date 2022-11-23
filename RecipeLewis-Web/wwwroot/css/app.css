@@ -84,3 +84,7 @@ a, .btn-link {
 #directions p {
     margin-bottom: 0 !important;
 }
+
+body .pwa-updater[b-pwa-updater] {
+    --pwa-updater-bar-z-index: 9999 !important;
+}
