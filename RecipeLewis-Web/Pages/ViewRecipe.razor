@@ -146,7 +146,7 @@
         <MudPaper Class="pa-4 position-fixed-lg" Style="">
             <MudGrid Justify="Justify.Center">
                 <MudItem xs="12" sm="12" md="12" lg="12">
-                    <MudButton Disabled="@(loading)" OnClick="HandlePrint" Variant="Variant.Filled" Color="Color.Primary">
+                    <MudButton StartIcon="@Icons.Material.Filled.Print" Disabled="@(loading)" OnClick="HandlePrint" Variant="Variant.Filled" Color="Color.Primary">
                         @if (loading)
                         {
                             <MudProgressCircular Class="ms-n1" Size="Size.Small" Indeterminate="true" />
@@ -155,6 +155,19 @@
                         else
                         {
                             <MudText>Print</MudText>
+                        }
+                    </MudButton>
+                </MudItem>
+                <MudItem xs="12" sm="12" md="12" lg="12">
+                    <MudButton StartIcon="@Icons.Material.Filled.ArrowBack" Disabled="@(loading)" Href="/recipes" Variant="Variant.Filled" Color="Color.Primary">
+                        @if (loading)
+                        {
+                            <MudProgressCircular Class="ms-n1" Size="Size.Small" Indeterminate="true" />
+                            <MudText Class="ms-2">Working...</MudText>
+                        }
+                        else
+                        {
+                            <MudText>Back</MudText>
                         }
                     </MudButton>
                 </MudItem>
