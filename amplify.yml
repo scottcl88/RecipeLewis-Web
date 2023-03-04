@@ -9,10 +9,10 @@ frontend:
         - ./dotnet7/dotnet --version
     build:
       commands:
-        - ./dotnet7/dotnet publish -c Release
+        - ./dotnet7/dotnet publish -c Release --property:PublishDir=release
   artifacts:
     files:
         - '**/*'
-    baseDirectory: /wwwroot
+    baseDirectory: /release/wwwroot
   cache:
     paths: []
