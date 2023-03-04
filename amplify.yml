@@ -5,7 +5,7 @@ frontend:
       commands:
         - curl -sSL https://dot.net/v1/dotnet-install.sh > dotnet-install.sh
         - chmod +x *.sh
-        - ./dotnet-install.sh -c 7.0.103xx -InstallDir ./dotnet7
+        - ./dotnet-install.sh -c 7.0.102xx -InstallDir ./dotnet7
         - ./dotnet7/dotnet --version
     build:
       commands:
