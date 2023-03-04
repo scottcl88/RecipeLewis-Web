@@ -13,6 +13,6 @@ frontend:
   artifacts:
     files:
         - '**/*'
-    baseDirectory: /release/wwwroot
+    baseDirectory: /wwwroot
   cache:
     paths: []
