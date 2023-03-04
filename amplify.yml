@@ -5,14 +5,14 @@ frontend:
       commands:
         - curl -sSL https://dot.net/v1/dotnet-install.sh > dotnet-install.sh
         - chmod +x *.sh
-        - ./dotnet-install.sh -c 7.0 -InstallDir ./dotnet7
+        - ./dotnet-install.sh -c 7.0.103xx -InstallDir ./dotnet7
         - ./dotnet7/dotnet --version
     build:
       commands:
-        - ./dotnet7/dotnet publish -c Release --property:PublishDir=release
+        - ./dotnet7/dotnet publish -c Release -o release
   artifacts:
     files:
         - '**/*'
-    baseDirectory: /release
+    baseDirectory: /release/wwwroot
   cache:
     paths: []
