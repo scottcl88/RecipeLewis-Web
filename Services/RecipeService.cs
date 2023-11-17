@@ -40,7 +40,7 @@ public class RecipeService : IRecipeService
 
     public async Task<RecipeModel> GetRecipe(int recipeId)
     {
-        return await _httpService.Get<RecipeModel>("recipes/" + recipeId);
+        return await _httpService.Get<RecipeModel>("recipes/get/" + recipeId);
     }
     public async Task<List<DocumentModel>> GetRecipeDocuments(int recipeId)
     {
@@ -59,6 +59,6 @@ public class RecipeService : IRecipeService
 
     public async Task<bool> Delete(int recipeId)
     {
-        return await _httpService.Delete<bool>("recipes/" + recipeId);
+        return await _httpService.Delete<bool>("recipes/delete/" + recipeId);
     }
 }
