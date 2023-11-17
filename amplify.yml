@@ -1,15 +1,15 @@
-version: 1
+version: 2
 frontend:
   phases:
     preBuild:
       commands:
-        - curl -sSL https://dot.net/v1/dotnet-install.sh > dotnet-install.sh
+        - curl -ssl https://dot.net/v1/dotnet-install.sh > dotnet-install.sh
         - chmod +x *.sh
-        - ./dotnet-install.sh -Version 7.0.102 -InstallDir ./dotnet7
-        - ./dotnet7/dotnet --version
+        - ./dotnet-install.sh -Channel 8.0 -InstallDir ./dotnet8
+        - ./dotnet8/dotnet --version
     build:
       commands:
-        - ./dotnet7/dotnet publish -c Release -o release
+        - ./dotnet8/dotnet publish -c Release
   artifacts:
     files:
         - '**/*'

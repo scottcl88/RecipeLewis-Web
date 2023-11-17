@@ -5,7 +5,7 @@
 <MudThemeProvider @ref="@_mudThemeProvider" @bind-IsDarkMode="@DarkMode" />
 <MudDialogProvider />
 <MudSnackbarProvider />
-<PWAUpdater/>
+<PWAUpdater />
 
 <MudLayout>
     <MudAppBar Elevation="1" Class="d-print-none">
@@ -15,10 +15,15 @@
     <MudDrawer @bind-Open="_drawerOpen" ClipMode="DrawerClipMode.Always" Elevation="2" Class="d-print-none">
         <NavMenu />
         <MudSwitch @bind-Checked="@DarkMode" Color="Color.Primary" Class="ma-4" T="bool" Label="Dark Mode" />
-        <p style="padding-left: 25px; bottom: 0%; position: fixed;">&copy; 2022 Scott Lewis - <a href="/legal">Legal</a></p>
-        <p style="padding-left: 25px; bottom: 3%; position: fixed;">
-            <a target="_blank" href="https://icons8.com/icon/oj3YGxooY6PN/cookbook">Cookbook</a> icon by <a target="_blank" href="https://icons8.com">Icons8</a>
-        </p>
+        <footer>
+            <p style="padding-left: 25px; bottom: 6%; position: fixed;">
+                Version 1.0.0
+            </p>
+            <p style="padding-left: 25px; bottom: 0%; position: fixed;">&copy; 2022 Scott Lewis - <a href="/legal">Legal</a></p>
+            <p style="padding-left: 25px; bottom: 3%; position: fixed;">
+                <a target="_blank" href="https://icons8.com/icon/oj3YGxooY6PN/cookbook">Cookbook</a> icon by <a target="_blank" href="https://icons8.com">Icons8</a>
+            </p>
+        </footer>
     </MudDrawer>
     <MudMainContent Class="">
         <MudContainer class="mt-4">
@@ -66,12 +71,13 @@
 
 }
 <style>
-      @@media print {
-        .mud-main-content{
+    @@media print {
+        .mud-main-content {
             padding-top: 0 !important;
         }
-      }
-      .bold{
-          font-weight: bold !important;
-      }
+    }
+
+    .bold {
+        font-weight: bold !important;
+    }
 </style>
