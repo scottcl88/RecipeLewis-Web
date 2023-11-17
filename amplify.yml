@@ -3,7 +3,7 @@ frontend:
   phases:
     preBuild:
       commands:
-        - curl -ssl https://dot.net/v1/dotnet-install.sh > dotnet-install.sh
+        - curl -ssl https://dotnet.microsoft.com/download/dotnet/scripts/v1/dotnet-install.sh > dotnet-install.sh
         - chmod +x *.sh
         - ./dotnet-install.sh -Channel LTS -InstallDir ./dotnet8
         - ./dotnet8/dotnet --version
