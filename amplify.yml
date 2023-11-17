@@ -1,4 +1,4 @@
-version: 3
+version: 4
 frontend:
   phases:
     preBuild:
@@ -9,7 +9,7 @@ frontend:
         - ./dotnet8/dotnet --version
     build:
       commands:
-        - ./dotnet8/dotnet publish -o Release
+        - ./dotnet8/dotnet publish -c Release -o release
   artifacts:
     files:
         - '**/*'
