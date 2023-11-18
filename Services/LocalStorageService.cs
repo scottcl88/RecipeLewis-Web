@@ -5,7 +5,7 @@ namespace BlazorApp.Services
 {
     public interface ILocalStorageService
     {
-        Task<T> GetItem<T>(string key);
+        Task<T?> GetItem<T>(string key);
 
         Task SetItem<T>(string key, T value);
 
@@ -21,7 +21,7 @@ namespace BlazorApp.Services
             _jsRuntime = jsRuntime;
         }
 
-        public async Task<T> GetItem<T>(string key)
+        public async Task<T?> GetItem<T>(string key)
         {
             var json = await _jsRuntime.InvokeAsync<string>("localStorage.getItem", key);
             if (json == null)

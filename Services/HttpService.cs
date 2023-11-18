@@ -7,8 +7,6 @@ using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Text;
 
-//using System.Text.Json;
-
 namespace BlazorApp.Services
 {
     public interface IHttpService
@@ -31,7 +29,6 @@ namespace BlazorApp.Services
         private readonly HttpClient _httpClient;
         private readonly NavigationManager _navigationManager;
         private readonly ILocalStorageService _localStorageService;
-        private readonly IConfiguration _configuration;
 
         public HttpService(
             HttpClient httpClient,
@@ -43,12 +40,11 @@ namespace BlazorApp.Services
             _httpClient = httpClient;
             _navigationManager = navigationManager;
             _localStorageService = localStorageService;
-            _configuration = configuration;
         }
 
         public string GetBaseAddress()
         {
-            return _httpClient.BaseAddress?.AbsoluteUri;
+            return _httpClient.BaseAddress?.AbsoluteUri ?? "";
         }
 
         public async Task<T> Get<T>(string uri)
@@ -94,7 +90,7 @@ namespace BlazorApp.Services
         {
             // add jwt auth header if user is logged in and request is to the api url
             var user = await _localStorageService.GetItem<UserModel>("user");
-            var isApiUrl = !request.RequestUri.IsAbsoluteUri;
+            bool isApiUrl = !request.RequestUri?.IsAbsoluteUri ?? false;
             if (user != null && isApiUrl)
                 request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", user.Token);
 
@@ -117,7 +113,6 @@ namespace BlazorApp.Services
             var content = await response.Content.ReadAsStringAsync();
             var deserializedObject = JsonConvert.DeserializeObject<T>(content);
             return deserializedObject;
-            //return await response.Content.ReadFromJsonAsync<T>();
         }
     }
 }

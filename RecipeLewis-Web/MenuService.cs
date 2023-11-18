@@ -1,15 +1,16 @@
 ﻿using Microsoft.JSInterop;
-using System;
 
 namespace RecipeLewis.Business;
 
 public class MenuService
 {
     private IJSRuntime jsRuntime;
+
     public MenuService(IJSRuntime JSRuntime)
     {
         jsRuntime = JSRuntime;
     }
+
     public bool IsAuthenticated { get; private set; }
     public bool IsDarkMode { get; private set; }
 

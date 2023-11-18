@@ -6,9 +6,9 @@ public class CategoryModel : EntityDataUserModel
     public string Name { get; set; }
 
     // Note: this is important so the MudSelect can compare pizzas
-    public override bool Equals(object o)
+    public override bool Equals(object? obj)
     {
-        var other = o as CategoryModel;
+        var other = obj as CategoryModel;
         return other?.Name == Name;
     }
 

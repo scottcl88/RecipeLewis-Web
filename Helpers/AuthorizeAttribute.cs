@@ -9,7 +9,7 @@ public class CustomAuthorizeAttribute : Attribute
 
     public CustomAuthorizeAttribute(params Role[] roles)
     {
-        _roles = roles ?? new Role[] { };
+        _roles = roles ?? [];
     }
 
     public IList<Role> Roles => _roles;

@@ -28,8 +28,7 @@
             }
         },
         loadDarkModeCss: function () {
-            if (document.head.querySelector("link[href='css/quill_darkmode.css']") == null)
-            {
+            if (document.head.querySelector("link[href='css/quill_darkmode.css']") == null) {
                 let link = document.createElement('link');
                 link.type = 'text/css';
                 link.rel = 'stylesheet';
@@ -40,8 +39,7 @@
             }
         },
         loadLightModeCss: function () {
-            if (document.head.querySelector("link[href='css/quill_darkmode.css']") != null)
-            {
+            if (document.head.querySelector("link[href='css/quill_darkmode.css']") != null) {
                 document.head.querySelector("link[href='css/quill_darkmode.css']").remove();
             }
         }
