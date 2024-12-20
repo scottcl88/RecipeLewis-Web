@@ -30,7 +30,8 @@ services
 services.AddScoped(x => {
     if (env.IsDevelopment())
     {
-        var apiUrl = new Uri("https://localhost:7039/api/");
+        var apiUrl = new Uri("https://api-recipe-lewis.azurewebsites.net/api/");
+        //var apiUrl = new Uri("https://localhost:7039/api/");
         return new HttpClient() { BaseAddress = apiUrl };
     }
     else

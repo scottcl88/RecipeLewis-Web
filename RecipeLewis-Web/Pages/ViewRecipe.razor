@@ -40,7 +40,7 @@
                         <MudInputLabel Class="bold">Yield</MudInputLabel>
                         <MudText>@model.Yield</MudText>
                     </MudItem>
-                    <MudItem xs="12" sm="12" md="12" lg="12">
+                    <MudItem xs="12" sm="12" md="12" lg="12" Class="d-print-none">
                         <MudInputLabel Class="bold">Tags</MudInputLabel>
                         <MudChipSet>
                             @foreach (var value in model.Tags)
@@ -107,32 +107,33 @@
                         <MudInputLabel Class="bold">Ingredients</MudInputLabel>
                         <div id="ingredients">
                             <MudText>@((MarkupString)model.IngredientsHTML)</MudText>
-                            </div>
-                        </MudItem>
-                        <MudItem xs="12" sm="12" md="12" lg="12" class="ma-auto">
-                            <MudInputLabel Class="bold">Directions</MudInputLabel>
-                            <div id="directions">
-                                <MudText>@((MarkupString)model.DirectionsHTML)</MudText>
-                            </div>
-                        </MudItem>
-                        <MudItem xs="6" sm="6" md="6" lg="6" Class="d-print-none">
-                            <MudInputLabel Class="bold">Recipe Record Created By</MudInputLabel>
-                            <MudText>@model.CreatedBy?.Name</MudText>
-                        </MudItem>
-                        <MudItem xs="6" sm="6" md="6" lg="6" Class="d-print-none">
-                            <MudInputLabel Class="bold">Recipe Record Last Modified By</MudInputLabel>
-                            <MudText>@model.ModifiedBy?.Name</MudText>
-                        </MudItem>
-                        <MudItem xs="12" sm="12" md="12" lg="12" Class="d-print-none">
-                            <MudPaper Outlined="true">
-                                @foreach (var file in documents)
+                        </div>
+                    </MudItem>
+                    <MudItem xs="12" sm="12" md="12" lg="12" class="ma-auto">
+                        <MudInputLabel Class="bold">Directions</MudInputLabel>
+                        <div id="directions">
+                            <MudText>@((MarkupString)model.DirectionsHTML)</MudText>
+                        </div>
+                    </MudItem>
+                    <MudItem xs="6" sm="6" md="6" lg="6" Class="d-print-none">
+                        <MudInputLabel Class="bold">Recipe Record Created By</MudInputLabel>
+                        <MudText>@model.CreatedBy?.Name</MudText>
+                    </MudItem>
+                    <MudItem xs="6" sm="6" md="6" lg="6" Class="d-print-none">
+                        <MudInputLabel Class="bold">Recipe Record Last Modified By</MudInputLabel>
+                        <MudText>@model.ModifiedBy?.Name</MudText>
+                    </MudItem>
+                    <MudItem xs="12" sm="12" md="12" lg="12" Class="d-print-none">
+                        <MudPaper Outlined="false">
+                            @foreach (var file in documents)
                             {
+                                <a href="@($"{apiBaseAddress}documents/download/{recipeId}/{file.DocumentId}")" target="_blank" title="Recipe Image" style="margin-bottom: 10px;">
+                                    <MudIcon Icon="@Icons.Filled.Download"></MudIcon> Download image
+                                </a>
                                 <MudItem xs="12" sm="12" md="12" lg="3">
                                     <a href="@($"{apiBaseAddress}documents/view/{recipeId}/{file.DocumentId}")" target="_blank" title="Recipe Image">
+                                        @* <span>View Image</span> *@
                                         <MudImage Src="@($"{apiBaseAddress}documents/view/{recipeId}/{file.DocumentId}")" ObjectFit="ObjectFit.Contain" Fluid="true" Alt="@file.Name" Elevation="25" Class="rounded-lg" />
-                                    </a>
-                                    <a href="@($"{apiBaseAddress}documents/download/{recipeId}/{file.DocumentId}")" target="_blank" title="Recipe Image">
-                                        <MudIcon Icon="@Icons.Filled.Download"></MudIcon>
                                     </a>
                                 </MudItem>
                             }
