@@ -35,7 +35,7 @@ services.AddScoped(x => {
     }
     else
     {
-        var apiUrl = new Uri("https://recipelewisapi.azurewebsites.net/api/");
+        var apiUrl = new Uri("https://api-recipe-lewis.azurewebsites.net/api/");
         return new HttpClient() { BaseAddress = apiUrl };
     }
 });
