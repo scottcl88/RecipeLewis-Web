@@ -15,7 +15,7 @@ Scope: Blazor WASM client, Services/, Helpers/, Models/, amplify.yml. Static rea
 1. **Refresh loop** (`RefreshTokenLoop`): fire-and-forget `Task.Run`, unobserved exceptions; refreshes immediately on start (redundant after login); `Task.Delay(diff)` throws if diff is negative; `_authUser.User.Token` may be null after logout (NRE); `_cts` can be null in `RefreshToken` failure path; `_refreshTokenLoopStarted` never reset on logout, so re-login does not restart the loop.
 2. **`HttpService.sendRequest`**: returns `default` on 401 (callers get null → NRE); error body parse assumes JSON dict with "message" (throws KeyNotFound/JsonException otherwise); reads localStorage on every request.
 3. **Login password-visibility toggle was a no-op** (InputType hardcoded) – fixed in this PR.
-4. Possible-null warnings (59 remain; see below) in Admin (Promote/Demote with null userId), Profile/ResetPassword/Register message handling, Recipes lambdas, AuthenticationService.
+4. Possible-null warnings (49 remain; see below) in Admin (Promote/Demote with null userId), Profile/ResetPassword/Register message handling, Recipes lambdas, AuthenticationService.
 5. `AddEditRecipe.razor` line ~510 compares non-nullable bool to null (always false – dead branch).
 6. Un-awaited call in MainLayout (CS4014) and async methods without await (CS1998, 8 places).
 
