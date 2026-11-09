@@ -14,7 +14,7 @@
         <MudPaper Class="pa-4">
             <MudForm @ref="form" @bind-IsValid="@isValid">
                 <MudTextField T="string" Label="Email" @bind-Value="@model.Email" Immediate="true" Required="true" RequiredError="Email is required!" InputType="InputType.Email" InputMode="InputMode.email" />
-                <MudTextField T="string" Label="Password" @bind-Value="@model.Password" Required="true" Immediate="true" InputType="InputType.Password"
+                <MudTextField T="string" Label="Password" @bind-Value="@model.Password" Required="true" Immediate="true" InputType="@PasswordInput"
                 Adornment="Adornment.End" AdornmentIcon="@PasswordInputIcon" OnAdornmentClick="ShowPasswordClick" RequiredError="Password is required!" />
                 <div class="mt-2">
                     <MudLink Href="/forgot-password" Class="ml-auto" Color="Color.Primary">

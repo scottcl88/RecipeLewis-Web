@@ -28,17 +28,13 @@
 </MudGrid>
 
 @code {
-    private bool isValid;
-    private MudForm form;
     private UserModel model = new UserModel();
-    private bool loading;
     private string message;
     private bool showMessage;
     private Severity severity;
 
     protected override async Task OnInitializedAsync()
     {
-        loading = true;
         try
         {
             showMessage = false;
@@ -55,14 +51,12 @@
             message = result.Message;
             severity = result.Success ? Severity.Success : Severity.Error;
             showMessage = true;
-            loading = false;
         }
-        catch (Exception ex)
+        catch (Exception)
         {
             message = "An error occurred.";
             severity = Severity.Error;
             showMessage = true;
-            loading = false;
         }
         StateHasChanged();
     }

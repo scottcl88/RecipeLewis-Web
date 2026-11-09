@@ -256,14 +256,9 @@
     private MudForm? form;
     private CreateRecipeRequest model = new CreateRecipeRequest();
     private string error;
-    private bool showError;
     private bool loading = true;
-    private string strSavedContent = "";
     private ElementReference divIngredientsEditorElement;
     private ElementReference divDirectionsEditorElement;
-    private string EditorContent;
-    private string EditorHTMLContent;
-    private bool EditorEnabled = true;
     List<string> tags = new List<string>();
     List<CategoryModel> categories = new List<CategoryModel>();
     List<DocumentModel> documents = new List<DocumentModel>();
@@ -413,7 +408,6 @@
             "QuillFunctions.getQuillContent", divIngredientsEditorElement);
             model.Directions = await JSRuntime.InvokeAsync<string>(
             "QuillFunctions.getQuillContent", divDirectionsEditorElement);
-            showError = false;
             RecipeModel result = null;
             bool isNew = false;
             if (recipeId <= 0)
@@ -458,7 +452,6 @@
         catch (Exception ex)
         {
             error = ex.Message;
-            showError = true;
             loading = false;
             Snackbar.Add("An error occured!", Severity.Error, config => { config.ShowCloseIcon = true; });
             Console.WriteLine("Error: {0}", ex.Message);
@@ -478,7 +471,7 @@
         var dialog = DialogService.Show<ConfirmDialog>("Cancel Changes", parameters);
         var result = await dialog.Result;
 
-        if (!result.Cancelled)
+        if (!result.Canceled)
         {
             NavigationManager.NavigateTo("/recipes");
         }
@@ -496,7 +489,7 @@
         var dialog = DialogService.Show<ConfirmDialog>("Delete Recipe", parameters);
         var result = await dialog.Result;
 
-        if (!result.Cancelled)
+        if (!result.Canceled)
         {
             DoDelete();
         }
@@ -520,7 +513,6 @@
         catch (Exception ex)
         {
             error = ex.Message;
-            showError = true;
             loading = false;
             Snackbar.Add("An error occured!", Severity.Error, config => { config.ShowCloseIcon = true; });
             Console.WriteLine("Error: {0}", ex.Message);
