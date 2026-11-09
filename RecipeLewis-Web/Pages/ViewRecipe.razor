@@ -128,7 +128,7 @@
                             @foreach (var file in documents)
                             {
                                 <a href="@($"{apiBaseAddress}documents/download/{recipeId}/{file.DocumentId}")" target="_blank" title="Recipe Image" style="margin-bottom: 10px;">
-                                    <MudIcon Icon="@Icons.Filled.Download"></MudIcon> Download image
+                                    <MudIcon Icon="@Icons.Material.Filled.Download"></MudIcon> Download image
                                 </a>
                                 <MudItem xs="12" sm="12" md="12" lg="3">
                                     <a href="@($"{apiBaseAddress}documents/view/{recipeId}/{file.DocumentId}")" target="_blank" title="Recipe Image">
@@ -183,8 +183,6 @@
 </style>
 @code {
     private MudForm? form;
-    private string error;
-    private bool showError;
     private bool loading = true;
     RecipeModel model = new RecipeModel();
     List<DocumentModel> documents = new List<DocumentModel>();

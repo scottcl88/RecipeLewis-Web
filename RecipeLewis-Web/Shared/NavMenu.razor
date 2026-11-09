@@ -39,7 +39,7 @@
         var dialog = DialogService.Show<ConfirmDialog>("Logout", parameters);
         var result = await dialog.Result;
 
-        if (!result.Cancelled)
+        if (!result.Canceled)
         {
             await DoLogout();
         }
